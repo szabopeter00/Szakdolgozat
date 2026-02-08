@@ -39,6 +39,8 @@ export default function App() {
             background: #FFF;
             transform-origin: -24px 50%;
             animation: spin 1s infinite linear;
+
+            will-change: transform;
           }
           .loader:after {
             content: "";
