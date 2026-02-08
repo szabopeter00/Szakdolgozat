@@ -25,6 +25,8 @@ export default function App() {
             height: 50px;
             position: relative;
             animation: flippx 2s infinite linear;
+
+            will-change: transform;
           }
           .loader:before {
             content: "";
