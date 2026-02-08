@@ -6,15 +6,17 @@ import { Model } from "./Fejhallgatoo";
 export default function App() {
   const [isReady, setIsReady] = useState(false);
 
-  const bgColor = "#fff7ee";
+  const bigText = "HEADPHONE 2.0";
 
   return (
     <div
       style={{
         width: "100vw",
         height: "100vh",
-        background: "#f0f0f0",
+        background:
+          "radial-gradient(circle,rgba(255, 247, 238, 1) 50%, rgba(255, 231, 196, 1) 100%)",
         position: "relative",
+        overflow: "hidden", // Fontos, hogy a nagy szöveg ne nyújtsa meg az oldalt
       }}
     >
       <style>
@@ -23,9 +25,7 @@ export default function App() {
           .loader-wrapper {
              transform: translate3d(0, 0, 0);
              will-change: transform;
-                     
-             width: 150px; 
-             height: 150px;
+             overflow: visible;
              display: flex;
              alignItems: center;
              justifyContent: center;
@@ -94,15 +94,42 @@ export default function App() {
         </div>
       </div>
 
-      <Canvas shadows dpr={[1, 2]} camera={{ position: [1, 2, 2], fov: 45 }}>
-        <color attach="background" args={[bgColor]} />
+      {/* --- HÁTTÉR SZÖVEG --- */}
+      <div
+        style={{
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          width: "100%",
+          textAlign: "center",
 
+          fontSize: "10vw",
+          fontWeight: "900",
+          fontFamily: "sans-serif",
+
+          color: "rgba(214, 159, 103, 0.15)",
+
+          zIndex: 0,
+          pointerEvents: "none",
+          userSelect: "none",
+          lineHeight: "1",
+        }}
+      >
+        {bigText}
+      </div>
+
+      <Canvas
+        shadows
+        dpr={[1, 2]}
+        camera={{ position: [1, 2, 2], fov: 45 }}
+        style={{ position: "absolute", top: 0, left: 0, zIndex: 10 }}
+      >
         <Suspense fallback={null}>
           <Stage environment="city" intensity={0.6} adjustCamera={false}>
             <Model onLoaded={() => setIsReady(true)} />
           </Stage>
         </Suspense>
-        <OrbitControls makeDefault />
       </Canvas>
     </div>
   );

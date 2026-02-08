@@ -37,7 +37,7 @@ export function Model({ onLoaded, ...props }) {
     // --- 1. FEJHALLGATÓ FORGATÁSA ---
     if (groupRef.current) {
       if (isSpinning) {
-        groupRef.current.rotation.y += delta * -2.7;
+        groupRef.current.rotation.y += delta * -2.6;
       } else {
         groupRef.current.rotation.y = MathUtils.lerp(
           groupRef.current.rotation.y,
@@ -116,20 +116,12 @@ export function Model({ onLoaded, ...props }) {
         geometry={nodes.EarPad_Left.geometry}
         material={padMaterial}
         material-color={padColor}
-        onClick={(e) => {
-          e.stopPropagation();
-          setPadColor("orange");
-        }}
       />
 
       <mesh
         geometry={nodes.EarPad_Right.geometry}
         material={padMaterial}
         material-color={padColor}
-        onClick={(e) => {
-          e.stopPropagation();
-          setPadColor("orange");
-        }}
       />
 
       <mesh
