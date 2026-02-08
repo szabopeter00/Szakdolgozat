@@ -1,42 +1,228 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap");
+
+/* --- GLOBAL CONTAINER --- */
+.app-container {
+  width: 100vw;
+  height: 100vh;
+  background: radial-gradient(
+    circle,
+    rgba(255, 247, 238, 1) 50%,
+    rgba(255, 231, 196, 1) 100%
+  );
+  position: relative;
+  overflow: hidden;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+/* --- LOADER --- */
+.loader-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #faead8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  transition: opacity 1s ease-in-out;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
+.loader-wrapper {
+  /* GPU gyorsítás */
+  transform: translate3d(0, 0, 0);
+  will-change: transform;
+  overflow: visible;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.loader {
+  width: calc(100px - 24px);
+  height: 50px;
+  position: relative;
+  animation: flippx 2s infinite linear;
+}
+
+.loader:before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #fff;
+  transform-origin: -24px 50%;
+  animation: spin 1s infinite linear;
+}
+
+.loader:after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  background: #fff;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+}
+
+@keyframes flippx {
+  0%,
+  49% {
+    transform: scaleX(1);
   }
-  to {
+  50%,
+  100% {
+    transform: scaleX(-1);
+  }
+}
+
+@keyframes spin {
+  100% {
     transform: rotate(360deg);
   }
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
+/* --- UI ELEMEK --- */
+
+/* LOGÓ */
+.logo {
+  position: absolute;
+  top: 10%;
+  left: 5%;
+  z-index: 20;
+  user-select: none;
+  width: 10vw;
+}
+.logo path {
+  fill: #7b6a58;
+  transition: fill 0.3s ease-in-out;
+}
+.logo:hover path {
+  fill: #473e34;
+  cursor: pointer;
+}
+
+/* NAVBAR */
+.navbar {
+  position: absolute;
+  top: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(10px);
+  border-radius: 22px;
+  padding: 3vh 10vw;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  display: flex;
+  gap: 3vw;
+  z-index: 20;
+}
+
+.nav-item {
+  width: 40px;
+  height: 6px;
+  background: #dcdcdc;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.nav-item:hover {
+  background: #b0b0b0;
+}
+
+/* DEKORATÍV VONALAK */
+.deco-lines {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  z-index: 10;
+  user-select: none;
+}
+
+.pos-bottom-left {
+  bottom: 10%;
+  left: 5%;
+  font-size: 2vw;
+  font-weight: 800;
+  width: 14vw;
+  color: rgba(214, 159, 103, 0.3);
+  line-height: 1.2;
+}
+
+.pos-bottom-right {
+  bottom: 5%;
+  right: 5%;
+  font-size: 2vw;
+  font-weight: 800;
+  width: 25vw;
+  color: rgba(214, 159, 103, 0.3);
+  line-height: 1.2;
+}
+
+/* HÁTTÉR SZÖVEG */
+.big-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  text-align: center;
+
+  font-size: 9vw;
+  font-weight: 900;
+  font-family: sans-serif;
+
+  color: rgba(214, 159, 103, 0.15);
+
+  z-index: 0;
+  pointer-events: none;
+  user-select: none;
+  line-height: 1;
+}
+
+/* 3D CANVAS */
+.canvas-container {
+  position: absolute !important;
+  top: 0;
+  left: 0;
+  z-index: 10;
+}
+
+/* --- RESZPONZÍVITÁS (MOBIL) --- */
+@media (max-width: 768px) {
+  .logo {
+    width: 14vw;
   }
-}
 
-.card {
-  padding: 2em;
-}
+  .navbar {
+    padding: 2vh 10vw;
+    left: 55%;
+    gap: 10px;
+  }
 
-.read-the-docs {
-  color: #888;
+  .nav-item {
+    width: 25px;
+    height: 4px;
+  }
+
+  .pos-top-left {
+    display: none;
+  }
+
+  .pos-bottom-left {
+    bottom: 30px;
+    left: 20px;
+    width: 100px;
+  }
+
+  .pos-bottom-right {
+    bottom: 60px;
+    right: 20px;
+    width: 80px;
+  }
 }
