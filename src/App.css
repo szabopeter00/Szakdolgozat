@@ -213,16 +213,13 @@
   .pos-top-left {
     display: none;
   }
-
   .pos-bottom-left {
-    bottom: 30px;
-    left: 20px;
-    width: 100px;
+    font-size: 3vw;
+    width: 20vw;
   }
 
   .pos-bottom-right {
-    bottom: 60px;
-    right: 20px;
-    width: 80px;
+    font-size: 3vw;
+    width: 35vw;
   }
 }
