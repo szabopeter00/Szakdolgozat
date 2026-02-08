@@ -17,16 +17,25 @@ export default function App() {
         position: "relative",
       }}
     >
-      {/* --- CSS STÍLUS A PÖRGÉSHEZ (Keyframes) --- */}
       <style>
         {`
+          /* Védőburok */
+          .loader-wrapper {
+             transform: translate3d(0, 0, 0);
+             will-change: transform;
+                     
+             width: 150px; 
+             height: 150px;
+             display: flex;
+             alignItems: center;
+             justifyContent: center;
+          }
+
           .loader {
             width: calc(100px - 24px);
             height: 50px;
             position: relative;
             animation: flippx 2s infinite linear;
-
-            will-change: transform;
           }
           .loader:before {
             content: "";
@@ -39,8 +48,6 @@ export default function App() {
             background: #FFF;
             transform-origin: -24px 50%;
             animation: spin 1s infinite linear;
-
-            will-change: transform;
           }
           .loader:after {
             content: "";
@@ -55,23 +62,16 @@ export default function App() {
           }
 
           @keyframes flippx {
-            0%, 49% {
-              transform: scaleX(1);
-            }
-            50%, 100% {
-              transform: scaleX(-1);
-            }
+            0%, 49% { transform: scaleX(1); }
+            50%, 100% { transform: scaleX(-1); }
           }
           @keyframes spin {
-            100% {
-              transform: rotate(360deg);
-            }
+            100% { transform: rotate(360deg); }
           }
-                
         `}
       </style>
 
-      {/* --- Loader --- */}
+      {/* --- Loader Konténer --- */}
       <div
         style={{
           position: "absolute",
@@ -86,10 +86,12 @@ export default function App() {
           zIndex: 100,
           transition: "opacity 1s ease-in-out",
           opacity: isReady ? 0 : 1,
-          pointerEvents: isReady ? "none" : "all", // Eltűnés utáni kattintások engedélyezése
+          pointerEvents: isReady ? "none" : "all",
         }}
       >
-        <span class="loader"></span>
+        <div className="loader-wrapper">
+          <span className="loader"></span>
+        </div>
       </div>
 
       <Canvas shadows dpr={[1, 2]} camera={{ position: [1, 2, 2], fov: 45 }}>
