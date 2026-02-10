@@ -1,0 +1,160 @@
+/* --- ALAPOK --- */
+.logo,
+.big-text,
+.little-text {
+  -webkit-user-select: none; /* Safari / Chrome */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE / Edge */
+  user-select: none; /* Standard */
+
+  -webkit-user-drag: none;
+
+  -webkit-tap-highlight-color: transparent;
+
+  cursor: default;
+}
+
+/* LOGÓ */
+.logo {
+  position: absolute;
+  top: 10%;
+  left: 5%;
+  z-index: 20;
+  width: 10vw;
+}
+.logo path {
+  fill: #7b6a58;
+  transition: fill 0.3s ease-in-out;
+}
+.logo:hover path {
+  fill: #473e34;
+  cursor: pointer;
+}
+
+/* --- HERO oldal --- */
+.hero {
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+  box-sizing: border-box;
+  background: radial-gradient(circle, rgba(255, 247, 238, 1) 50%, rgba(255, 231, 196, 1) 100%);
+  z-index: 10;
+}
+
+/* HERO SZÖVEGEK */
+.big-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  text-align: center;
+
+  font-size: 9vw;
+  font-weight: 900;
+  font-family: sans-serif;
+
+  color: rgba(214, 159, 103, 0.15);
+
+  z-index: 0;
+  pointer-events: none;
+  line-height: 1;
+}
+
+.little-text {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  z-index: 10;
+}
+
+.pos-bottom-left {
+  bottom: 10%;
+  left: 5%;
+  font-size: 2vw;
+  font-weight: 800;
+  width: 14vw;
+  color: rgba(214, 159, 103, 0.3);
+  line-height: 1.2;
+  font-family: sans-serif;
+}
+
+.pos-bottom-right {
+  bottom: 5%;
+  right: 5%;
+  font-size: 2vw;
+  font-weight: 800;
+  width: 25vw;
+  color: rgba(214, 159, 103, 0.3);
+  line-height: 1.2;
+  font-family: sans-serif;
+}
+
+/* ANIMÁCIÓK */
+@keyframes slideInRight {
+  from {
+    transform: translateX(50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    transform: translateX(-50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInTop {
+  from {
+    transform: translateY(-50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.slide-in-right {
+  opacity: 0;
+  animation: slideInRight 5s ease-out 0.5s forwards;
+}
+
+.slide-in-left {
+  opacity: 0;
+  animation: slideInLeft 5s ease-out 0.5s forwards;
+}
+
+.slide-in-top {
+  opacity: 0;
+  animation: slideInTop 5s ease-out 0.5s forwards;
+}
+
+/* --- RESZPONZÍVITÁS --- */
+@media (max-width: 768px) {
+  .logo {
+    width: 14vw;
+  }
+
+  .pos-bottom-left {
+    font-size: 3vw;
+    width: 20vw;
+  }
+
+  .pos-bottom-right {
+    font-size: 3vw;
+    width: 35vw;
+  }
+}
