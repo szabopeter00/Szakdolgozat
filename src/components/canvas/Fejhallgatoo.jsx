@@ -1,7 +1,8 @@
 import React, { useState, useMemo, useEffect, useRef } from "react";
-import { useGLTF } from "@react-three/drei";
+import { useGLTF, ContactShadows } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import { MathUtils } from "three";
+import { useScrollStore } from "../../store/useScrollStore";
 
 export function Model({ onLoaded, ...props }) {
   const { nodes, materials } = useGLTF("../models/fejhallgatoo.glb");
@@ -10,42 +11,125 @@ export function Model({ onLoaded, ...props }) {
   const [padColor, setPadColor] = useState("#ffecd6");
 
   const [isSpinning, setIsSpinning] = useState(true);
-  const [isCameraMoving, setIsCameraMoving] = useState(true);
 
   const isMobile = window.innerWidth <= 768;
-  const targetZ = isMobile ? 3 : 2;
+  const initialCameraZ = isMobile ? 3 : 2;
+
+  const scroll = useScrollStore((s) => s.scroll);
 
   useEffect(() => {
     const loadTimer = setTimeout(() => {
       onLoaded?.();
-
-      setTimeout(() => setIsSpinning(false), 1000);
-      setTimeout(() => setIsCameraMoving(false), 1200);
+      // Az 1.5 mp nagyjából egybeesik az Apple-ös ease-out animáció kifutásával
+      setTimeout(() => setIsSpinning(false), 1700);
     }, 500);
 
     return () => clearTimeout(loadTimer);
   }, [onLoaded]);
 
-  // --- FEJHALLGATÓ BETÖLTÉSE ---
+  // Időzítő a lebegéshez
+  const introTime = useRef(0);
+
+  const isFirstFrame = useRef(true);
+
   useFrame((state, delta) => {
-    // --- FEJHALLGATÓ FORGATÁSA ---
-    if (groupRef.current) {
-      if (isSpinning) {
-        groupRef.current.rotation.y += delta * -2.6;
-      } else {
-        groupRef.current.rotation.y = MathUtils.lerp(groupRef.current.rotation.y, -8.28, 0.04);
-      }
+    if (!groupRef.current) return;
+
+    // --- 🎥 1. KEZDŐPOZÍCIÓK (APPLE INTRO BEÁLLÍTÁSA) ---
+    if (isFirstFrame.current) {
+      // 1. Kamera fentről indul
+      state.camera.position.y = 4.5;
+      // 2. Kamera hátrébbról indul (Zoom-in hatás)
+      state.camera.position.z = initialCameraZ + 3;
+      // 3. A modell egy kicsit el van forgatva, innen fog a helyére pörögni (Math.PI * 1.5 = 270 fok)
+      groupRef.current.rotation.y = -8.28 + Math.PI * 1.5;
+      isFirstFrame.current = false;
     }
 
-    // --- KAMERA MOZGATÁSA ---
-    if (isCameraMoving) {
-      state.camera.position.y += delta * -0.6;
-      state.camera.lookAt(0, 0, 0);
-    } else {
-      state.camera.position.y = MathUtils.lerp(state.camera.position.y, 0, 0.04);
-      state.camera.lookAt(0, 0, 0);
+    const safeDelta = Math.min(delta, 0.1);
+
+    let currentCameraTargetZ = initialCameraZ;
+    let currentCameraTargetY = 0;
+
+    /* =========================
+    1️⃣ INTRO ANIMÁCIÓ
+    ========================== */
+
+    // Az X forgás alapértelmezett beállása
+    let targetRotY = -8.28;
+
+    // --- APPLE FORGÁS ---
+    if (scroll < 0.1) {
+      // A lineáris forgás helyett itt is lerp-et használunk!
+      // Ez adja azt a gyönyörű, fokozatosan lassuló "beállást", ahogy a 270 fokos elfordulásból a helyére csúszik.
+      groupRef.current.rotation.y = MathUtils.lerp(groupRef.current.rotation.y, targetRotY, 0.04);
     }
-    state.camera.position.z = MathUtils.lerp(state.camera.position.z, targetZ, 0.1);
+
+    // --- LEBEGÉS (Hover) ---
+    const baseModelY = -0.15;
+
+    introTime.current += safeDelta;
+    const hoverFade = MathUtils.clamp(1 - scroll / 0.1, 0, 1);
+    const hoverOffset = Math.sin(introTime.current * 1.2) * 0.018;
+
+    let targetModelY = baseModelY + hoverOffset * hoverFade;
+
+    /* =========================
+    2️⃣ SCROLL ANIMÁCIÓ
+    ========================== */
+
+    let targetX = 0;
+    let modelTargetZ = 0;
+
+    if (scroll > 0) {
+      const rawProgress = MathUtils.clamp((scroll - 0.2) / 0.7, 0, 1);
+      const progress = 1 - Math.pow(1 - rawProgress, 3);
+
+      const finalX = isMobile ? 0.5 : 0.8;
+      targetX = finalX * progress;
+
+      const finalZ = isMobile ? 0.6 : -0.2;
+      modelTargetZ = finalZ * progress;
+
+      targetRotY = MathUtils.lerp(-8.28, -7.2, progress);
+
+      const zoomAmount = 0.4;
+      currentCameraTargetZ = initialCameraZ - zoomAmount * progress;
+
+      const finalCamY = isMobile ? 0.5 : 0.3;
+      currentCameraTargetY = finalCamY * progress;
+
+      state.scene.environmentRotation.y = MathUtils.lerp(0, Math.PI, progress);
+
+      groupRef.current.rotation.y = MathUtils.lerp(groupRef.current.rotation.y, targetRotY, 0.08);
+    }
+
+    /* =========================
+    3️⃣ ALKALMAZÁS A MODELLRE
+    ========================== */
+    groupRef.current.position.x = MathUtils.lerp(groupRef.current.position.x, targetX, 0.08);
+    groupRef.current.position.z = MathUtils.lerp(groupRef.current.position.z, modelTargetZ, 0.08);
+    groupRef.current.position.y = targetModelY;
+
+    /* =========================
+    4️⃣ KAMERA VÉGLEGESÍTÉSE
+    ========================== */
+
+    // JAVÍTÁS: A Z tengely (Zoom-in) sebességét lejjebb vettem (0.1 -> 0.03),
+    // hogy tökéletesen szinkronban, filmes lassulással érkezzen meg a süllyedéssel együtt!
+    state.camera.position.z = MathUtils.lerp(state.camera.position.z, currentCameraTargetZ, 0.03);
+
+    const introFallSpeed = 0.035; // Zuhanás sebessége (gyönyörű, lágy érkezés)
+    const settleSpeed = 0.05; // Beállás sebessége
+
+    if (isSpinning) {
+      state.camera.position.y = MathUtils.lerp(state.camera.position.y, currentCameraTargetY, introFallSpeed);
+    } else {
+      state.camera.position.y = MathUtils.lerp(state.camera.position.y, currentCameraTargetY, settleSpeed);
+    }
+
+    // A kamera a süllyedés és közeledés közben végig a modellt (a 0,0,0 pontot) figyeli
+    state.camera.lookAt(0, 0, 0);
   });
 
   // --- ANYAG JAVÍTÁS ---
@@ -64,7 +148,7 @@ export function Model({ onLoaded, ...props }) {
 
   // --- Fejhallgatoo ---
   return (
-    <group ref={groupRef} {...props} dispose={null}>
+    <group ref={groupRef} position={[0, -0.15, 0]} {...props} dispose={null}>
       <mesh geometry={nodes.Baffle_Left.geometry} material={materials.ColorMaterial}>
         <mesh geometry={nodes.ButtonANC_Left.geometry} material={materials.ColorMaterial} />
         <mesh geometry={nodes.ButtonPower_Left.geometry} material={materials.ColorMaterial} />
@@ -77,7 +161,6 @@ export function Model({ onLoaded, ...props }) {
       <mesh geometry={nodes.EarCup_Right.geometry} material={materials.ColorMaterial} />
 
       <mesh geometry={nodes.EarPad_Left.geometry} material={padMaterial} material-color={padColor} />
-
       <mesh geometry={nodes.EarPad_Right.geometry} material={padMaterial} material-color={padColor} />
 
       <mesh geometry={nodes.Headband.geometry} material={materials.ColorMaterial} />

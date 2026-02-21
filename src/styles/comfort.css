@@ -1,0 +1,7 @@
+.comfort {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  padding-left: 10vw;
+  background: linear-gradient(320deg, rgba(255, 247, 238, 1) 25%, rgba(255, 231, 196, 1) 100%);
+}
