@@ -5,7 +5,7 @@
   display: flex;
   align-items: center;
   padding-left: 10vw;
-  background-image: linear-gradient(180deg, rgba(255, 231, 196, 1) 60%, rgba(97, 70, 25, 1) 100%);
+  background-image: linear-gradient(180deg, rgba(255, 231, 196, 1) 60%, rgba(223, 203, 165, 1) 100%);
 }
 h2 {
   color: #353d46;

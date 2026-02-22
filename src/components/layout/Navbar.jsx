@@ -20,7 +20,7 @@ export default function Navbar() {
         Hangzás
       </span>
       <span className="nav-item" onClick={() => scrollTo(3)}>
-        Valami
+        Tartósság
       </span>
       <span className="nav-item" onClick={() => scrollTo(4)}>
         Kinézet

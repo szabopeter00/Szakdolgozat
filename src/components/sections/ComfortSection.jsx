@@ -4,7 +4,7 @@ import "../../styles/comfort.css";
 
 export default function ComfortSection() {
   const scroll = useScrollStore((s) => s.scroll);
-  const progress = MathUtils.clamp((scroll - 0.2) / 0.7, 0, 1);
+  const progress = MathUtils.clamp((scroll - 0.2) / 0.2, 0, 1);
 
   return (
     <section className="comfort">

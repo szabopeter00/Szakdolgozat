@@ -4,6 +4,7 @@ import Loader from "./components/layout/Loader";
 import Navbar from "./components/layout/Navbar";
 import HeroSection from "./components/sections/HeroSection";
 import ComfortSection from "./components/sections/ComfortSection";
+import SoundSection from "./components/sections/SoundSection";
 import CanvasScene from "./components/canvas/CanvasScene";
 
 export default function App() {
@@ -32,6 +33,8 @@ export default function App() {
       <HeroSection />
 
       <ComfortSection />
+
+      <SoundSection />
 
       <CanvasScene onReady={() => setIsReady(true)} />
     </>
