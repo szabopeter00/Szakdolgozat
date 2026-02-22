@@ -50,14 +50,6 @@
 
 /* --- RESZPONZÍVITÁS --- */
 
-@media (max-width: 768px) {
-  .navbar {
-    padding: 2vh 10vw;
-    left: 55%;
-    gap: 10px;
-  }
-}
-
 @media (max-width: 1200px) {
   .nav-item {
     font-size: 1.5vw;
@@ -65,5 +57,15 @@
   .navbar {
     gap: 5vw;
     padding: 2.5vh 6vw;
+  }
+}
+
+@media (max-width: 768px) {
+  .navbar {
+    width: 90%;
+    justify-content: space-around;
+  }
+  .nav-item {
+    font-size: 2.3vw;
   }
 }
