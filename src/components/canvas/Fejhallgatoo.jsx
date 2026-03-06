@@ -88,13 +88,13 @@ export function Model({ onLoaded, ...props }) {
 
     if (scroll > 0) {
       // Comfort szekció
-      const rawProgress = MathUtils.clamp((scroll - 0.2) / 0.35, 0, 1);
+      const rawProgress = MathUtils.clamp((scroll - 0.2) / 0.2, 0, 1);
       const progress = 1 - Math.pow(1 - rawProgress, 3);
 
       const finalX = isMobile ? 0.6 : 0.9;
       targetX = finalX * progress;
 
-      const finalZ = isMobile ? 0.6 : -0.3;
+      const finalZ = isMobile ? 0.4 : -0.3;
       modelTargetZ = finalZ * progress;
 
       targetRotY = MathUtils.lerp(-8.28, -7.3, progress);
@@ -108,7 +108,7 @@ export function Model({ onLoaded, ...props }) {
       state.scene.environmentRotation.y = MathUtils.lerp(0, Math.PI, progress);
 
       // Sound szekció
-      const rawProgress2 = MathUtils.clamp((scroll - 0.55) / 0.35, 0, 1);
+      const rawProgress2 = MathUtils.clamp((scroll - 0.4) / 0.4, 0, 1);
       const progress2 = 1 - Math.pow(1 - rawProgress2, 3);
 
       if (progress2 > 0) {
@@ -125,7 +125,7 @@ export function Model({ onLoaded, ...props }) {
         targetRotY = MathUtils.lerp(targetRotY, section3Y, progress2);
 
         // 4. Kamera Y pozíció - mehet még feljebb (így a modell lejjebb kerül)
-        const section3CamY = isMobile ? 1.4 : 1.3;
+        const section3CamY = isMobile ? 1.3 : 1.3;
         currentCameraTargetY = MathUtils.lerp(currentCameraTargetY, section3CamY, progress2);
 
         // 5. Kamera Zoom változtatás

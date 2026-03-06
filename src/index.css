@@ -2,7 +2,6 @@ html,
 body {
   background-color: rgb(255, 231, 196);
   max-width: 100vw;
-  overflow-x: hidden;
   overscroll-behavior: none;
   margin: 0;
   padding: 0;
@@ -11,5 +10,8 @@ body {
 .canvas-container {
   width: 100vw;
   max-width: 100%;
-  overflow: hidden;
+}
+#root {
+  max-width: 100%;
+  overflow-x: clip;
 }

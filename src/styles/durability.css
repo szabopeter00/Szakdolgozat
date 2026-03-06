@@ -1,21 +1,17 @@
 @import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
 
-.sound {
-  height: 200vh;
+.durability {
+  height: 120vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: right;
+  align-items: flex-end;
   padding: 0 10vw;
-  background-color: rgb(223, 203, 165);
+  background-color: rgb(116, 92, 48);
   box-sizing: border-box;
 }
 
-.stickycontent {
-  position: sticky;
-  top: 60vh;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-}
-
-.sound h3 {
+.durability h3 {
   color: #353d46;
   font-family: "Poppins", sans-serif;
   font-weight: 800;
@@ -24,7 +20,7 @@
   line-height: 1.1;
 }
 
-.sound p {
+.durability p {
   color: #353d46;
   font-family: "Poppins", sans-serif;
   font-weight: 500;
@@ -37,22 +33,20 @@
 
 /* --- MOBIL NÉZET --- */
 @media (max-width: 768px) {
-  .sound {
-    padding: 0 5vw;
-    height: 150vh;
-  }
-
-  .stickycontent {
+  .durability {
     align-items: center;
     text-align: center;
-    top: 65dvh;
+    padding: 0 5vw;
+    justify-content: flex-end;
+    padding-bottom: 25vh;
+    height: 80dvh;
   }
 
-  .sound h3 {
+  .durability h3 {
     max-width: 100%;
   }
 
-  .sound p {
+  .durability p {
     max-width: 100%;
   }
 }

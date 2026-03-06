@@ -6,6 +6,7 @@ import HeroSection from "./components/sections/HeroSection";
 import ComfortSection from "./components/sections/ComfortSection";
 import SoundSection from "./components/sections/SoundSection";
 import CanvasScene from "./components/canvas/CanvasScene";
+import DurabilitySection from "./components/sections/DurabilitySection";
 
 export default function App() {
   const [isReady, setIsReady] = useState(false);
@@ -35,6 +36,8 @@ export default function App() {
       <ComfortSection />
 
       <SoundSection />
+
+      <DurabilitySection />
 
       <CanvasScene onReady={() => setIsReady(true)} />
     </>

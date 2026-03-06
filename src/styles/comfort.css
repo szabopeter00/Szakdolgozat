@@ -17,9 +17,11 @@ h2 {
 @media (max-width: 768px) {
   .comfort {
     padding-left: 5vw;
-    height: 130vh;
+    height: 130dvh;
   }
   h2 {
     font-size: 17vw;
+    font-weight: 900;
+    width: 100%;
   }
 }
