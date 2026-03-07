@@ -56,7 +56,7 @@ export function Model({ onLoaded, ...props }) {
     const handlePointerMove = (e) => {
       if (isDragging.current && useScrollStore.getState().scroll > 0.97) {
         const deltaX = e.clientX - previousX.current;
-        manualRotY.current += deltaX * (isMobile ? 0.05 : 0.01); // Forgatás érzékenysége
+        manualRotY.current += deltaX * (isMobile ? 0.03 : 0.01); // Forgatás érzékenysége
         previousX.current = e.clientX;
       }
     };

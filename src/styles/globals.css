@@ -9,7 +9,7 @@ body {
 
 .app-container {
   width: 100vw;
-  height: 100vh;
+  height: 100svh;
   background: rgb(255, 231, 196);
   position: relative;
   overflow: hidden;
@@ -22,7 +22,7 @@ body {
 
 .section {
   width: 100vw;
-  height: 100vh;
+  height: 100svh;
   position: relative;
 }
 
