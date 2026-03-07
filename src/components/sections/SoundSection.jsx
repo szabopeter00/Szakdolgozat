@@ -6,10 +6,10 @@ export default function SoundSection() {
   const scroll = useScrollStore((s) => s.scroll);
 
   // A szekció teljes "élettartama" (0-tól 1-ig)
-  const progress = MathUtils.clamp((scroll - 0.5) / 0.4, 0, 1);
+  const progress = MathUtils.clamp((scroll - 0.4) / 0.4, 0, 1);
 
   const fadeIn = MathUtils.clamp(progress * 6, 0, 1);
-  const fadeOut = MathUtils.clamp((0.7 - progress) * 10, 0, 1);
+  const fadeOut = MathUtils.clamp((0.5 - progress) * 10, 0, 1);
 
   const currentOpacity = Math.min(fadeIn, fadeOut);
 

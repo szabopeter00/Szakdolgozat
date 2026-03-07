@@ -6,21 +6,71 @@ import { useScrollStore } from "../../store/useScrollStore";
 
 export function Model({ onLoaded, ...props }) {
   const { nodes, materials } = useGLTF("../models/fejhallgatoo.glb");
-
   const groupRef = useRef();
 
-  // ÚJ: Referenciák az elmozdítandó alkatrészekhez
+  // --- robbantott ábrához referenciák ---
+  const topRef = useRef();
+
+  const hingeLeftRef = useRef();
+  const sliderHousingLeftRef = useRef();
+  const sliderMetalLeftRef = useRef();
+  const sliderTrackLeftRef = useRef();
+  const yokeLeftRef = useRef();
+
+  const hingeRightRef = useRef();
+  const sliderHousingRightRef = useRef();
+  const sliderMetalRightRef = useRef();
+  const sliderTrackRightRef = useRef();
+  const yokeRightRef = useRef();
+
+  const outLeftRef = useRef();
+  const outRightRef = useRef();
   const padLeftRef = useRef();
   const speakerLeftRef = useRef();
+  const padRightRef = useRef();
+  const speakerRightRef = useRef();
 
   const [padColor, setPadColor] = useState("#ffecd6");
-
   const [isSpinning, setIsSpinning] = useState(true);
 
   const isMobile = window.innerWidth <= 768;
   const initialCameraZ = isMobile ? 3.5 : 2;
 
   const scroll = useScrollStore((s) => s.scroll);
+
+  // --- interaktív forgatás (a végén) ---
+  const manualRotY = useRef(-8.28);
+  const isDragging = useRef(false);
+  const previousX = useRef(0);
+
+  useEffect(() => {
+    const handlePointerDown = (e) => {
+      if (useScrollStore.getState().scroll > 0.97) {
+        isDragging.current = true;
+        previousX.current = e.clientX;
+      }
+    };
+    const handlePointerUp = () => {
+      isDragging.current = false;
+    };
+    const handlePointerMove = (e) => {
+      if (isDragging.current && useScrollStore.getState().scroll > 0.97) {
+        const deltaX = e.clientX - previousX.current;
+        manualRotY.current += deltaX * 0.01; // Forgatás érzékenysége
+        previousX.current = e.clientX;
+      }
+    };
+
+    window.addEventListener("pointerdown", handlePointerDown);
+    window.addEventListener("pointerup", handlePointerUp);
+    window.addEventListener("pointermove", handlePointerMove);
+
+    return () => {
+      window.removeEventListener("pointerdown", handlePointerDown);
+      window.removeEventListener("pointerup", handlePointerUp);
+      window.removeEventListener("pointermove", handlePointerMove);
+    };
+  }, []);
 
   useEffect(() => {
     const loadTimer = setTimeout(() => {
@@ -32,7 +82,6 @@ export function Model({ onLoaded, ...props }) {
   }, [onLoaded]);
 
   const introTime = useRef(0);
-
   const isFirstFrame = useRef(true);
 
   useFrame((state, delta) => {
@@ -40,11 +89,8 @@ export function Model({ onLoaded, ...props }) {
 
     // --- KEZDŐPOZÍCIÓK ---
     if (isFirstFrame.current) {
-      // Kamera fentről indul
       state.camera.position.y = 4.5;
-      // 2. Kamera hátrébbról indul
       state.camera.position.z = initialCameraZ + 3;
-      // 3. A modell egy kicsit el van forgatva
       groupRef.current.rotation.y = -8.28 + Math.PI * 1.5;
       isFirstFrame.current = false;
     }
@@ -54,10 +100,6 @@ export function Model({ onLoaded, ...props }) {
     let currentCameraTargetZ = initialCameraZ;
     let currentCameraTargetY = 0;
 
-    /* =========================
-    INTRO ANIMÁCIÓ
-    ========================== */
-
     let targetRotY = -8.28;
 
     if (scroll < 0.1) {
@@ -66,7 +108,6 @@ export function Model({ onLoaded, ...props }) {
 
     // --- LEBEGÉS ---
     const baseModelY = -0.15;
-
     introTime.current += safeDelta;
     const hoverFade = MathUtils.clamp(1 - scroll / 0.1, 0, 1);
     const hoverOffset = Math.sin(introTime.current * 1.2) * 0.018;
@@ -80,15 +121,48 @@ export function Model({ onLoaded, ...props }) {
     let targetX = 0;
     let modelTargetZ = 0;
 
-    // ÚJ: Változók az alkatrészek elmozdulásához (alapértelmezetten 0, a helyükön vannak)
-    let padLeftX = 0;
-    let padLeftY = 0;
-    let speakerLeftX = 0;
-    let speakerLeftY = 0;
+    let padLeftX = 0,
+      padLeftY = 0;
+    let speakerLeftX = 0,
+      speakerLeftY = 0;
+
+    let expTopY = 0;
+
+    let hLX = 0,
+      hLY = 0,
+      shLX = 0,
+      shLY = 0,
+      smLX = 0,
+      smLY = 0,
+      stLX = 0,
+      stLY = 0,
+      yLX = 0,
+      yLY = 0;
+    let hRX = 0,
+      hRY = 0,
+      shRX = 0,
+      shRY = 0,
+      smRX = 0,
+      smRY = 0,
+      stRX = 0,
+      stRY = 0,
+      yRX = 0,
+      yRY = 0;
+
+    let expOutLX = 0,
+      expOutLY = 0;
+    let expOutRX = 0,
+      expOutRY = 0;
+    let padRightX = 0,
+      padRightY = 0;
+    let speakerRightX = 0,
+      speakerRightY = 0;
 
     if (scroll > 0) {
-      // Comfort szekció
-      const rawProgress = MathUtils.clamp((scroll - 0.2) / 0.2, 0, 1);
+      // ==========================================
+      //          KÉNYELEM SZEKCIÓ
+      // ==========================================
+      const rawProgress = MathUtils.clamp((scroll - 0.05) / 0.15, 0, 1);
       const progress = 1 - Math.pow(1 - rawProgress, 3);
 
       const finalX = isMobile ? 0.6 : 0.9;
@@ -107,41 +181,118 @@ export function Model({ onLoaded, ...props }) {
 
       state.scene.environmentRotation.y = MathUtils.lerp(0, Math.PI, progress);
 
-      // Sound szekció
-      const rawProgress2 = MathUtils.clamp((scroll - 0.4) / 0.4, 0, 1);
+      // ==========================================
+      //          HANGZÁS SZEKCIÓ
+      // ==========================================
+      const rawProgress2 = MathUtils.clamp((scroll - 0.33) / 0.2, 0, 1);
       const progress2 = 1 - Math.pow(1 - rawProgress2, 3);
 
       if (progress2 > 0) {
-        // 1. Új X pozíció (Keresztezi a képernyőt mondjuk a másik oldalra)
         const section3X = isMobile ? -0.2 : -0.8;
         targetX = MathUtils.lerp(targetX, section3X, progress2);
 
-        // 2. Új Z pozíció
         const section3Z = isMobile ? 0.2 : 0.5;
         modelTargetZ = MathUtils.lerp(modelTargetZ, section3Z, progress2);
 
-        // 3. Tovább forgatjuk a modellt, hogy más szögből mutassa magát
         const section3Y = isMobile ? -6.5 : -5.7;
         targetRotY = MathUtils.lerp(targetRotY, section3Y, progress2);
 
-        // 4. Kamera Y pozíció - mehet még feljebb (így a modell lejjebb kerül)
         const section3CamY = isMobile ? 1.3 : 1.3;
         currentCameraTargetY = MathUtils.lerp(currentCameraTargetY, section3CamY, progress2);
 
-        // 5. Kamera Zoom változtatás
         const section3ZoomAmount = 0.8;
         currentCameraTargetZ = MathUtils.lerp(currentCameraTargetZ, initialCameraZ - section3ZoomAmount, progress2);
 
-        // 6. Opcionális fényfordulás
         state.scene.environmentRotation.y = MathUtils.lerp(Math.PI, Math.PI * 1.5, progress2);
 
-        // ÚJ: 7. Fülpárna és hangszóró leválasztása (Robbantott ábra effekt)
-        // Ezeket a számokat szabadon átírhatod, hogy milyen messzire és milyen irányba távolodjanak el!
-        padLeftX = 0.3 * progress2; // Balra távolodik
-        padLeftY = 0.06 * progress2; // Lefelé távolodik
+        const closeProgress = MathUtils.clamp((scroll - 0.7) / 0.1, 0, 1);
+        const closeEase = 1 - Math.pow(1 - closeProgress, 3);
 
-        speakerLeftX = 0.15 * progress2; // Kevésbé távolodik el, mint a párna (réteg-hatás)
-        speakerLeftY = 0.07 * progress2;
+        padLeftX = 0.3 * progress2 * (1 - closeEase);
+        padLeftY = 0.06 * progress2 * (1 - closeEase);
+        speakerLeftX = 0.15 * progress2 * (1 - closeEase);
+        speakerLeftY = 0.07 * progress2 * (1 - closeEase);
+      }
+
+      // ==========================================
+      //          TARTÓSSÁG SZEKCIÓ
+      // ==========================================
+      const rawProgress3 = MathUtils.clamp((scroll - 0.65) / 0.25, 0, 1);
+      const progress3 = 1 - Math.pow(1 - rawProgress3, 3);
+
+      if (progress3 > 0) {
+        targetX = MathUtils.lerp(targetX, 0, progress3);
+        modelTargetZ = MathUtils.lerp(modelTargetZ, 0, progress3);
+        currentCameraTargetY = MathUtils.lerp(currentCameraTargetY, 0.4, progress3);
+
+        currentCameraTargetZ = MathUtils.lerp(currentCameraTargetZ, initialCameraZ + 0.3, progress3);
+
+        const spinProgress = Math.min(progress3 * 1.5, 1);
+        const targetSpinY = -8.28 + Math.PI * 1.2;
+        const explodeRotY = -Math.PI * 0.9;
+
+        targetRotY = MathUtils.lerp(targetRotY, MathUtils.lerp(targetSpinY, explodeRotY, spinProgress), progress3);
+
+        const explodeProgress = MathUtils.clamp((scroll - 0.75) / 0.1, 0, 1);
+
+        const resetProgress = MathUtils.clamp((scroll - 0.9) / 0.1, 0, 1);
+        const resetEase = 1 - Math.pow(1 - resetProgress, 3);
+
+        if (explodeProgress > 0) {
+          const easeExp = (1 - Math.pow(1 - explodeProgress, 4)) * (1 - resetEase);
+
+          // Fejpánt
+          expTopY = 0.4 * easeExp;
+
+          // Bal oldali alkatrészek
+          hLX = (isMobile ? -0.2 : -0.5) * easeExp;
+          hLY = 0.4 * easeExp;
+          shLX = (isMobile ? -0.3 : -0.7) * easeExp;
+          shLY = 0.5 * easeExp;
+          smLX = (isMobile ? -0.1 : -0.4) * easeExp;
+          smLY = 0.4 * easeExp;
+          stLX = (isMobile ? -0.1 : -0.4) * easeExp;
+          stLY = 0.2 * easeExp;
+          yLX = (isMobile ? -0.4 : -0.8) * easeExp;
+          yLY = 0.3 * easeExp;
+
+          // Jobb oldali alkatrészek
+          hRX = (isMobile ? 0.2 : 0.5) * easeExp;
+          hRY = 0.4 * easeExp;
+          shRX = (isMobile ? 0.3 : 0.7) * easeExp;
+          shRY = 0.5 * easeExp;
+          smRX = (isMobile ? 0.1 : 0.4) * easeExp;
+          smRY = 0.4 * easeExp;
+          stRX = (isMobile ? 0.1 : 0.4) * easeExp;
+          stRY = 0.2 * easeExp;
+          yRX = (isMobile ? 0.4 : 0.8) * easeExp;
+          yRY = 0.3 * easeExp;
+
+          // Külső kagylók
+          expOutLX = (isMobile ? -0.45 : -1) * easeExp;
+          expOutRX = (isMobile ? 0.55 : 1) * easeExp;
+
+          // Fülpárnák és hangszórók
+          padLeftX = (isMobile ? -0.3 : -0.7) * easeExp;
+          padRightX = (isMobile ? 0.3 : 0.7) * easeExp;
+          speakerLeftX = (isMobile ? -0.4 : -0.85) * easeExp;
+          speakerRightX = (isMobile ? 0.45 : 0.85) * easeExp;
+        }
+
+        // --- KINÉZET SZEKCIÓ ---
+        if (resetProgress > 0) {
+          targetRotY = MathUtils.lerp(targetRotY, -8.28, resetEase);
+          currentCameraTargetY = MathUtils.lerp(currentCameraTargetY, 0, resetEase);
+          currentCameraTargetZ = MathUtils.lerp(currentCameraTargetZ, initialCameraZ, resetEase);
+          state.scene.environmentRotation.y = MathUtils.lerp(state.scene.environmentRotation.y, 0, resetEase);
+        }
+
+        // --- INTERAKTÍV FORGATÁS ---
+        if (scroll > 0.97) {
+          targetRotY = manualRotY.current;
+        } else {
+          manualRotY.current = targetRotY;
+        }
       }
     }
 
@@ -152,17 +303,79 @@ export function Model({ onLoaded, ...props }) {
     groupRef.current.position.z = MathUtils.lerp(groupRef.current.position.z, modelTargetZ, 0.08);
     groupRef.current.position.y = targetModelY;
 
-    // ÚJ: Alkatrészek sima lerpezett elmozdítása
-    if (padLeftRef.current && speakerLeftRef.current) {
-      padLeftRef.current.position.x = MathUtils.lerp(padLeftRef.current.position.x, padLeftX, 0.08);
-      padLeftRef.current.position.y = MathUtils.lerp(padLeftRef.current.position.y, padLeftY, 0.08);
-
-      speakerLeftRef.current.position.x = MathUtils.lerp(speakerLeftRef.current.position.x, speakerLeftX, 0.08);
-      speakerLeftRef.current.position.y = MathUtils.lerp(speakerLeftRef.current.position.y, speakerLeftY, 0.08);
-    }
-
     if (scroll > 0) {
       groupRef.current.rotation.y = MathUtils.lerp(groupRef.current.rotation.y, targetRotY, 0.08);
+    }
+
+    // --- ALKATRÉSZEK LERPEZÉSE ---
+    const smooth = 0.08;
+    if (topRef.current) topRef.current.position.y = MathUtils.lerp(topRef.current.position.y, expTopY, smooth);
+
+    if (hingeLeftRef.current) {
+      hingeLeftRef.current.position.x = MathUtils.lerp(hingeLeftRef.current.position.x, hLX, smooth);
+      hingeLeftRef.current.position.y = MathUtils.lerp(hingeLeftRef.current.position.y, hLY, smooth);
+    }
+    if (sliderHousingLeftRef.current) {
+      sliderHousingLeftRef.current.position.x = MathUtils.lerp(sliderHousingLeftRef.current.position.x, shLX, smooth);
+      sliderHousingLeftRef.current.position.y = MathUtils.lerp(sliderHousingLeftRef.current.position.y, shLY, smooth);
+    }
+    if (sliderMetalLeftRef.current) {
+      sliderMetalLeftRef.current.position.x = MathUtils.lerp(sliderMetalLeftRef.current.position.x, smLX, smooth);
+      sliderMetalLeftRef.current.position.y = MathUtils.lerp(sliderMetalLeftRef.current.position.y, smLY, smooth);
+    }
+    if (sliderTrackLeftRef.current) {
+      sliderTrackLeftRef.current.position.x = MathUtils.lerp(sliderTrackLeftRef.current.position.x, stLX, smooth);
+      sliderTrackLeftRef.current.position.y = MathUtils.lerp(sliderTrackLeftRef.current.position.y, stLY, smooth);
+    }
+    if (yokeLeftRef.current) {
+      yokeLeftRef.current.position.x = MathUtils.lerp(yokeLeftRef.current.position.x, yLX, smooth);
+      yokeLeftRef.current.position.y = MathUtils.lerp(yokeLeftRef.current.position.y, yLY, smooth);
+    }
+
+    if (hingeRightRef.current) {
+      hingeRightRef.current.position.x = MathUtils.lerp(hingeRightRef.current.position.x, hRX, smooth);
+      hingeRightRef.current.position.y = MathUtils.lerp(hingeRightRef.current.position.y, hRY, smooth);
+    }
+    if (sliderHousingRightRef.current) {
+      sliderHousingRightRef.current.position.x = MathUtils.lerp(sliderHousingRightRef.current.position.x, shRX, smooth);
+      sliderHousingRightRef.current.position.y = MathUtils.lerp(sliderHousingRightRef.current.position.y, shRY, smooth);
+    }
+    if (sliderMetalRightRef.current) {
+      sliderMetalRightRef.current.position.x = MathUtils.lerp(sliderMetalRightRef.current.position.x, smRX, smooth);
+      sliderMetalRightRef.current.position.y = MathUtils.lerp(sliderMetalRightRef.current.position.y, smRY, smooth);
+    }
+    if (sliderTrackRightRef.current) {
+      sliderTrackRightRef.current.position.x = MathUtils.lerp(sliderTrackRightRef.current.position.x, stRX, smooth);
+      sliderTrackRightRef.current.position.y = MathUtils.lerp(sliderTrackRightRef.current.position.y, stRY, smooth);
+    }
+    if (yokeRightRef.current) {
+      yokeRightRef.current.position.x = MathUtils.lerp(yokeRightRef.current.position.x, yRX, smooth);
+      yokeRightRef.current.position.y = MathUtils.lerp(yokeRightRef.current.position.y, yRY, smooth);
+    }
+
+    if (outLeftRef.current) {
+      outLeftRef.current.position.x = MathUtils.lerp(outLeftRef.current.position.x, expOutLX, smooth);
+    }
+    if (outRightRef.current) {
+      outRightRef.current.position.x = MathUtils.lerp(outRightRef.current.position.x, expOutRX, smooth);
+    }
+
+    if (padLeftRef.current) {
+      padLeftRef.current.position.x = MathUtils.lerp(padLeftRef.current.position.x, padLeftX, smooth);
+      padLeftRef.current.position.y = MathUtils.lerp(padLeftRef.current.position.y, padLeftY, smooth);
+    }
+    if (speakerLeftRef.current) {
+      speakerLeftRef.current.position.x = MathUtils.lerp(speakerLeftRef.current.position.x, speakerLeftX, smooth);
+      speakerLeftRef.current.position.y = MathUtils.lerp(speakerLeftRef.current.position.y, speakerLeftY, smooth);
+    }
+
+    if (padRightRef.current) {
+      padRightRef.current.position.x = MathUtils.lerp(padRightRef.current.position.x, padRightX, smooth);
+      padRightRef.current.position.y = MathUtils.lerp(padRightRef.current.position.y, padRightY, smooth);
+    }
+    if (speakerRightRef.current) {
+      speakerRightRef.current.position.x = MathUtils.lerp(speakerRightRef.current.position.x, speakerRightX, smooth);
+      speakerRightRef.current.position.y = MathUtils.lerp(speakerRightRef.current.position.y, speakerRightY, smooth);
     }
 
     /* =========================
@@ -170,8 +383,8 @@ export function Model({ onLoaded, ...props }) {
     ========================== */
     state.camera.position.z = MathUtils.lerp(state.camera.position.z, currentCameraTargetZ, 0.03);
 
-    const introFallSpeed = 0.035; // Zuhanás sebessége
-    const settleSpeed = 0.02; // Beállás sebessége
+    const introFallSpeed = 0.035;
+    const settleSpeed = 0.02;
 
     if (isSpinning) {
       state.camera.position.y = MathUtils.lerp(state.camera.position.y, currentCameraTargetY, introFallSpeed);
@@ -182,7 +395,6 @@ export function Model({ onLoaded, ...props }) {
     state.camera.lookAt(0, 0, 0);
   });
 
-  // --- ANYAG JAVÍTÁS ---
   useEffect(() => {
     Object.values(materials).forEach((material) => {
       if (material.roughness < 0.1) material.roughness = 0.15;
@@ -192,46 +404,69 @@ export function Model({ onLoaded, ...props }) {
   }, [materials]);
 
   const padMaterial = useMemo(() => {
-    const mat = materials.ColorMaterial.clone();
-    return mat;
+    return materials.ColorMaterial.clone();
   }, [materials.ColorMaterial]);
 
-  // --- Fejhallgatoo ---
+  // --- Fejhallgato modell ---
   return (
     <group ref={groupRef} position={[0, -0.15, 0]} {...props} dispose={null}>
-      <mesh geometry={nodes.Baffle_Left.geometry} material={materials.ColorMaterial}>
-        <mesh geometry={nodes.ButtonANC_Left.geometry} material={materials.ColorMaterial} />
-        <mesh geometry={nodes.ButtonPower_Left.geometry} material={materials.ColorMaterial} />
-        <mesh geometry={nodes.ButtonVolume_Left.geometry} material={materials.ColorMaterial} />
-        <mesh geometry={nodes.PortAudio_Left.geometry} material={materials.BlackholeMaterial} />
-      </mesh>
+      <group ref={topRef}>
+        <mesh geometry={nodes.Headband.geometry} material={materials.ColorMaterial} />
+      </group>
 
-      <mesh geometry={nodes.Baffle_Right.geometry} material={materials.ColorMaterial} />
-      <mesh geometry={nodes.EarCup_Left.geometry} material={materials.ColorMaterial} />
-      <mesh geometry={nodes.EarCup_Right.geometry} material={materials.ColorMaterial} />
+      <group>
+        <mesh ref={hingeLeftRef} geometry={nodes.Hinge_Left.geometry} material={materials.ColorMaterial} />
+        <mesh
+          ref={sliderHousingLeftRef}
+          geometry={nodes.SliderHousing_Left.geometry}
+          material={materials.ColorMaterial}
+        />
+        <mesh ref={sliderMetalLeftRef} geometry={nodes.SliderMetal_Left.geometry} material={materials.MetalMaterial} />
+        <mesh ref={sliderTrackLeftRef} geometry={nodes.SliderTrack_Left.geometry} material={materials.ColorMaterial} />
+        <mesh ref={yokeLeftRef} geometry={nodes.Yoke_Left.geometry} material={materials.ColorMaterial} />
+      </group>
 
-      {/* ÚJ: ref hozzáadása a bal fülpárnához */}
+      <group>
+        <mesh ref={hingeRightRef} geometry={nodes.Hinge_Right.geometry} material={materials.ColorMaterial}>
+          <mesh geometry={nodes.Logo.geometry} material={materials.LogoMaterial} />
+        </mesh>
+        <mesh
+          ref={sliderHousingRightRef}
+          geometry={nodes.SliderHousing_Right.geometry}
+          material={materials.ColorMaterial}
+        />
+        <mesh
+          ref={sliderMetalRightRef}
+          geometry={nodes.SliderMetal_Right.geometry}
+          material={materials.MetalMaterial}
+        />
+        <mesh
+          ref={sliderTrackRightRef}
+          geometry={nodes.SliderTrack_Right.geometry}
+          material={materials.ColorMaterial}
+        />
+        <mesh ref={yokeRightRef} geometry={nodes.Yoke_Right.geometry} material={materials.ColorMaterial} />
+      </group>
+
+      <group ref={outLeftRef}>
+        <mesh geometry={nodes.Baffle_Left.geometry} material={materials.ColorMaterial}>
+          <mesh geometry={nodes.ButtonANC_Left.geometry} material={materials.ColorMaterial} />
+          <mesh geometry={nodes.ButtonPower_Left.geometry} material={materials.ColorMaterial} />
+          <mesh geometry={nodes.ButtonVolume_Left.geometry} material={materials.ColorMaterial} />
+          <mesh geometry={nodes.PortAudio_Left.geometry} material={materials.BlackholeMaterial} />
+        </mesh>
+        <mesh geometry={nodes.EarCup_Left.geometry} material={materials.ColorMaterial} />
+      </group>
+
+      <group ref={outRightRef}>
+        <mesh geometry={nodes.Baffle_Right.geometry} material={materials.ColorMaterial} />
+        <mesh geometry={nodes.EarCup_Right.geometry} material={materials.ColorMaterial} />
+      </group>
+
       <mesh ref={padLeftRef} geometry={nodes.EarPad_Left.geometry} material={padMaterial} material-color={padColor} />
-      <mesh geometry={nodes.EarPad_Right.geometry} material={padMaterial} material-color={padColor} />
-
-      <mesh geometry={nodes.Headband.geometry} material={materials.ColorMaterial} />
-      <mesh geometry={nodes.Hinge_Left.geometry} material={materials.ColorMaterial} />
-      <mesh geometry={nodes.Hinge_Right.geometry} material={materials.ColorMaterial}>
-        <mesh geometry={nodes.Logo.geometry} material={materials.LogoMaterial} />
-      </mesh>
-      <mesh geometry={nodes.SliderHousing_Left.geometry} material={materials.ColorMaterial} />
-      <mesh geometry={nodes.SliderHousing_Right.geometry} material={materials.ColorMaterial} />
-      <mesh geometry={nodes.SliderMetal_Left.geometry} material={materials.MetalMaterial} />
-      <mesh geometry={nodes.SliderMetal_Right.geometry} material={materials.MetalMaterial} />
-      <mesh geometry={nodes.SliderTrack_Left.geometry} material={materials.ColorMaterial} />
-      <mesh geometry={nodes.SliderTrack_Right.geometry} material={materials.ColorMaterial} />
-
-      {/* ÚJ: ref hozzáadása a bal hangszóróhoz */}
+      <mesh ref={padRightRef} geometry={nodes.EarPad_Right.geometry} material={padMaterial} material-color={padColor} />
       <mesh ref={speakerLeftRef} geometry={nodes.SpeakerDriver_Left.geometry} material={materials.ColorMaterial} />
-      <mesh geometry={nodes.SpeakerDriver_Right.geometry} material={materials.ColorMaterial} />
-
-      <mesh geometry={nodes.Yoke_Left.geometry} material={materials.ColorMaterial} />
-      <mesh geometry={nodes.Yoke_Right.geometry} material={materials.ColorMaterial} />
+      <mesh ref={speakerRightRef} geometry={nodes.SpeakerDriver_Right.geometry} material={materials.ColorMaterial} />
     </group>
   );
 }
