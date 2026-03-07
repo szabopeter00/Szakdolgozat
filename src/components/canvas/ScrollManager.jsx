@@ -7,7 +7,7 @@ export default function ScrollManager() {
   useEffect(() => {
     const handleScroll = () => {
       const scrollTop = window.scrollY;
-      const height = document.body.scrollHeight - window.innerHeight;
+      const height = document.body.scrollHeight - document.documentElement.clientHeight;
       const offset = scrollTop / height;
 
       setScroll(offset);

@@ -28,7 +28,7 @@
   color: #353d46;
   font-family: "Poppins", sans-serif;
   font-weight: 500;
-  font-size: clamp(1rem, 1.2vw, 1.3rem);
+  font-size: clamp(0.8rem, 1.2vw, 1.3rem);
   margin: 0;
   line-height: 1.6;
   opacity: 0.9;
