@@ -1,7 +1,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
 
 .durability {
-  height: 250vh;
+  height: 250svh;
   padding: 0 10vw;
   background-color: rgb(223, 203, 165);
   box-sizing: border-box;
@@ -9,7 +9,7 @@
 
 .sticky {
   position: sticky;
-  top: 40dvh;
+  top: 40svh;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -40,7 +40,7 @@
 @media (max-width: 768px) {
   .durability {
     padding: 0 5vw;
-    height: 150vh;
+    height: 150svh;
   }
 
   .durability h3 {

@@ -8,7 +8,7 @@ body {
 }
 
 .app-container {
-  width: 100vw;
+  width: 100%;
   height: var(--app-height, 100vh);
   background: rgb(255, 231, 196);
   position: relative;
@@ -21,7 +21,7 @@ body {
 }
 
 .section {
-  width: 100vw;
+  width: 100%;
   height: var(--app-height, 100vh);
   position: relative;
 }
