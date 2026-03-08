@@ -2,6 +2,7 @@
 
 .durability {
   height: 250svh;
+  width: 100%;
   padding: 0 10vw;
   background-color: rgb(223, 203, 165);
   box-sizing: border-box;
@@ -23,6 +24,11 @@
   font-size: clamp(1.5rem, 2.75vw, 3rem);
   margin-bottom: 3%;
   line-height: 1.1;
+
+  max-width: 100%;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  hyphens: auto;
 }
 
 .durability p {
@@ -41,13 +47,20 @@
   .durability {
     padding: 0 5vw;
     height: 150svh;
+
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .sticky {
+    width: 100%;
   }
 
   .durability h3 {
-    max-width: 100%;
+    width: 100%;
   }
 
   .durability p {
-    max-width: 100%;
+    width: 100%;
   }
 }
