@@ -51,15 +51,15 @@
 .buttons {
   display: flex;
   flex-direction: column;
-  gap: 3vh;
+  gap: 3svh;
   justify-content: center;
   margin-left: 5%;
   z-index: 1;
 }
 
 .buttons button {
-  width: 4vh;
-  height: 4vh;
+  width: 4svh;
+  height: 4svh;
   border-radius: 50%;
   border: 2px solid #252525;
   cursor: pointer;
