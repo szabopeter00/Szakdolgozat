@@ -11,6 +11,22 @@ body {
   overscroll-behavior: none;
 }
 
+/* --- ALAPOK --- */
+.logo,
+.big-text,
+.little-text {
+  -webkit-user-select: none; /* Safari / Chrome */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE / Edge */
+  user-select: none; /* Standard */
+
+  -webkit-user-drag: none;
+
+  -webkit-tap-highlight-color: transparent;
+
+  cursor: default;
+}
+
 #root {
   max-width: 100%;
   overflow-x: clip;

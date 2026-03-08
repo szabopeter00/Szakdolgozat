@@ -3,6 +3,7 @@ import { useGLTF, ContactShadows } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import { MathUtils } from "three";
 import { useScrollStore } from "../../store/useScrollStore";
+import { useColorStore } from "../../store/useColorStore";
 
 export function Model({ onLoaded, ...props }) {
   const { nodes, materials } = useGLTF("../models/fejhallgatoo.glb");
@@ -30,8 +31,10 @@ export function Model({ onLoaded, ...props }) {
   const padRightRef = useRef();
   const speakerRightRef = useRef();
 
-  const [padColor, setPadColor] = useState("#ffecd6");
   const [isSpinning, setIsSpinning] = useState(true);
+
+  // Szín lekérése a store-ból
+  const currentColor = useColorStore((s) => s.modelColor);
 
   const isMobile = window.innerWidth <= 768;
   const initialCameraZ = isMobile ? 3.5 : 2;
@@ -56,7 +59,7 @@ export function Model({ onLoaded, ...props }) {
     const handlePointerMove = (e) => {
       if (isDragging.current && useScrollStore.getState().scroll > 0.97) {
         const deltaX = e.clientX - previousX.current;
-        manualRotY.current += deltaX * (isMobile ? 0.03 : 0.01); // Forgatás érzékenysége
+        manualRotY.current += deltaX * (isMobile ? 0.03 : 0.01);
         previousX.current = e.clientX;
       }
     };
@@ -80,6 +83,33 @@ export function Model({ onLoaded, ...props }) {
 
     return () => clearTimeout(loadTimer);
   }, [onLoaded]);
+
+  // --- ÚJ: FELHÚZVA! Itt hozzuk létre a fülpárna anyagát a színezés ELŐTT ---
+  const padMaterial = useMemo(() => {
+    return materials.ColorMaterial.clone();
+  }, [materials.ColorMaterial]);
+
+  // --- ÚJ: Összevont, letisztított színező useEffect ---
+  useEffect(() => {
+    Object.values(materials).forEach((material) => {
+      // Eredeti anyagjavításaid
+      if (material.roughness < 0.1) material.roughness = 0.15;
+      if (material.metalness > 0.9) material.metalness = 0.9;
+
+      // Fő anyag színezése
+      if (material.name === "ColorMaterial") {
+        material.color.set(currentColor);
+      }
+
+      material.needsUpdate = true;
+    });
+
+    // Fülpárnák klónozott anyagának színezése
+    if (padMaterial) {
+      padMaterial.color.set(currentColor);
+      padMaterial.needsUpdate = true;
+    }
+  }, [materials, currentColor, padMaterial]);
 
   const introTime = useRef(0);
   const isFirstFrame = useRef(true);
@@ -160,7 +190,7 @@ export function Model({ onLoaded, ...props }) {
 
     if (scroll > 0) {
       // ==========================================
-      //          KÉNYELEM SZEKCIÓ
+      //           KÉNYELEM SZEKCIÓ
       // ==========================================
       const rawProgress = MathUtils.clamp((scroll - 0.05) / 0.15, 0, 1);
       const progress = 1 - Math.pow(1 - rawProgress, 3);
@@ -182,7 +212,7 @@ export function Model({ onLoaded, ...props }) {
       state.scene.environmentRotation.y = MathUtils.lerp(0, Math.PI, progress);
 
       // ==========================================
-      //          HANGZÁS SZEKCIÓ
+      //           HANGZÁS SZEKCIÓ
       // ==========================================
       const rawProgress2 = MathUtils.clamp((scroll - 0.33) / 0.2, 0, 1);
       const progress2 = 1 - Math.pow(1 - rawProgress2, 3);
@@ -215,7 +245,7 @@ export function Model({ onLoaded, ...props }) {
       }
 
       // ==========================================
-      //          TARTÓSSÁG SZEKCIÓ
+      //           TARTÓSSÁG SZEKCIÓ
       // ==========================================
       const rawProgress3 = MathUtils.clamp((scroll - 0.65) / 0.25, 0, 1);
       const progress3 = 1 - Math.pow(1 - rawProgress3, 3);
@@ -241,10 +271,8 @@ export function Model({ onLoaded, ...props }) {
         if (explodeProgress > 0) {
           const easeExp = (1 - Math.pow(1 - explodeProgress, 4)) * (1 - resetEase);
 
-          // Fejpánt
           expTopY = 0.4 * easeExp;
 
-          // Bal oldali alkatrészek
           hLX = (isMobile ? -0.2 : -0.5) * easeExp;
           hLY = 0.4 * easeExp;
           shLX = (isMobile ? -0.3 : -0.7) * easeExp;
@@ -256,7 +284,6 @@ export function Model({ onLoaded, ...props }) {
           yLX = (isMobile ? -0.4 : -0.8) * easeExp;
           yLY = 0.3 * easeExp;
 
-          // Jobb oldali alkatrészek
           hRX = (isMobile ? 0.2 : 0.5) * easeExp;
           hRY = 0.4 * easeExp;
           shRX = (isMobile ? 0.3 : 0.7) * easeExp;
@@ -268,11 +295,9 @@ export function Model({ onLoaded, ...props }) {
           yRX = (isMobile ? 0.4 : 0.8) * easeExp;
           yRY = 0.3 * easeExp;
 
-          // Külső kagylók
           expOutLX = (isMobile ? -0.45 : -1) * easeExp;
           expOutRX = (isMobile ? 0.55 : 1) * easeExp;
 
-          // Fülpárnák és hangszórók
           padLeftX = (isMobile ? -0.3 : -0.7) * easeExp;
           padRightX = (isMobile ? 0.3 : 0.7) * easeExp;
           speakerLeftX = (isMobile ? -0.4 : -0.85) * easeExp;
@@ -395,18 +420,6 @@ export function Model({ onLoaded, ...props }) {
     state.camera.lookAt(0, 0, 0);
   });
 
-  useEffect(() => {
-    Object.values(materials).forEach((material) => {
-      if (material.roughness < 0.1) material.roughness = 0.15;
-      if (material.metalness > 0.9) material.metalness = 0.9;
-      material.needsUpdate = true;
-    });
-  }, [materials]);
-
-  const padMaterial = useMemo(() => {
-    return materials.ColorMaterial.clone();
-  }, [materials.ColorMaterial]);
-
   // --- Fejhallgato modell ---
   return (
     <group ref={groupRef} position={[0, -0.15, 0]} {...props} dispose={null}>
@@ -463,8 +476,9 @@ export function Model({ onLoaded, ...props }) {
         <mesh geometry={nodes.EarCup_Right.geometry} material={materials.ColorMaterial} />
       </group>
 
-      <mesh ref={padLeftRef} geometry={nodes.EarPad_Left.geometry} material={padMaterial} material-color={padColor} />
-      <mesh ref={padRightRef} geometry={nodes.EarPad_Right.geometry} material={padMaterial} material-color={padColor} />
+      {/* FIGYELEM: Levettük innen a régi material-color={} propot, hogy a useEffect végezze a dolgát! */}
+      <mesh ref={padLeftRef} geometry={nodes.EarPad_Left.geometry} material={padMaterial} />
+      <mesh ref={padRightRef} geometry={nodes.EarPad_Right.geometry} material={padMaterial} />
       <mesh ref={speakerLeftRef} geometry={nodes.SpeakerDriver_Left.geometry} material={materials.ColorMaterial} />
       <mesh ref={speakerRightRef} geometry={nodes.SpeakerDriver_Right.geometry} material={materials.ColorMaterial} />
     </group>

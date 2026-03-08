@@ -1,6 +1,7 @@
 import { useScrollStore } from "../../store/useScrollStore";
 import { MathUtils } from "three";
 import "../../styles/comfort.css";
+import "../../index.css";
 
 export default function ComfortSection() {
   const scroll = useScrollStore((s) => s.scroll);
@@ -8,15 +9,17 @@ export default function ComfortSection() {
 
   return (
     <section className="comfort">
-      <h2
-        style={{
-          opacity: progress,
-          transform: `translateY(${100 * (1 - progress)}px)`,
-          transition: "none",
-        }}
-      >
-        Kényelem, amit egész nap élvezel
-      </h2>
+      <div className="little-text">
+        <h2
+          style={{
+            opacity: progress,
+            transform: `translateY(${100 * (1 - progress)}px)`,
+            transition: "none",
+          }}
+        >
+          Kényelem, amit egész nap élvezel
+        </h2>
+      </div>
     </section>
   );
 }

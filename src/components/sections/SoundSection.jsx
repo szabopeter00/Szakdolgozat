@@ -1,6 +1,7 @@
 import { useScrollStore } from "../../store/useScrollStore";
 import { MathUtils } from "three";
 import "../../styles/sound.css";
+import "../../index.css";
 
 export default function SoundSection() {
   const scroll = useScrollStore((s) => s.scroll);
@@ -17,6 +18,7 @@ export default function SoundSection() {
     <section className="sound">
       <div className="stickycontent">
         <div
+          className="little-text"
           style={{
             opacity: currentOpacity,
             transform: `translateY(${50 * (1 - fadeIn)}px)`,

@@ -1,4 +1,5 @@
 import "../../styles/hero.css";
+import "../../index.css";
 
 export default function HeroSection({ onCanvasReady }) {
   return (

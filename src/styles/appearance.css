@@ -6,7 +6,7 @@
   justify-content: center;
   position: relative;
   box-sizing: border-box;
-  background: radial-gradient(circle, rgb(248, 215, 177) 10%, rgba(255, 231, 196, 1) 70%);
+  background: radial-gradient(circle, rgb(255, 229, 198) 10%, rgb(255, 216, 157) 70%);
   z-index: 9;
 }
 
@@ -27,6 +27,42 @@
   z-index: 0;
   pointer-events: none;
   line-height: 1;
+}
+
+.rotate {
+  position: absolute;
+  top: 85%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+
+  -webkit-user-select: none; /* Safari / Chrome */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE / Edge */
+  user-select: none; /* Standard */
+
+  -webkit-user-drag: none;
+
+  -webkit-tap-highlight-color: transparent;
+
+  cursor: default;
+}
+
+.buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 3vh;
+  justify-content: center;
+  margin-left: 5%;
+  z-index: 1;
+}
+
+.buttons button {
+  width: 4vh;
+  height: 4vh;
+  border-radius: 50%;
+  border: 2px solid #252525;
+  cursor: pointer;
 }
 
 /* --- RESZPONZÍVITÁS --- */
