@@ -33,7 +33,7 @@ export default function AppearanceSection({ onCanvasReady }) {
           }}
         />
       </div>
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" height="48" width="48" className="rotate">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="rotate">
         <g id="arrow-rotate-vertical-axis-left-fill">
           <path
             id="Union"
