@@ -8,7 +8,6 @@ body {
   padding: 0;
   background-color: rgb(255, 231, 196);
   max-width: 100%;
-  overflow-x: hidden;
   overscroll-behavior: none;
 }
 
@@ -21,7 +20,6 @@ body {
   width: 100%;
   background: rgb(255, 231, 196);
   position: relative;
-  overflow: hidden;
 }
 
 .scroll-container {
