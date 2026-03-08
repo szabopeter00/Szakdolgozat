@@ -1,6 +1,6 @@
 .appearance {
   height: 100dvh;
-  width: 100vw;
+  width: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -69,6 +69,6 @@
 
 @media (max-width: 768px) {
   .appearance {
-    background: radial-gradient(circle, rgba(255, 247, 238, 1) 25%, rgba(255, 231, 196, 1) 90%);
+    background: radial-gradient(circle, rgb(255, 229, 198) 25%, rgb(255, 216, 157) 90%);
   }
 }
