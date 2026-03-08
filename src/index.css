@@ -9,6 +9,7 @@ body {
   background-color: rgb(255, 231, 196);
   max-width: 100%;
   overscroll-behavior: none;
+  overflow-x: clip;
 }
 
 /* --- ALAPOK --- */

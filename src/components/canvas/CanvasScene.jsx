@@ -16,7 +16,7 @@ export default function CanvasScene({ onReady }) {
         top: 0,
         left: 0,
         height: "100svh",
-        width: "100vw",
+        width: "100%",
         zIndex: 10,
         pointerEvents: "none",
       }}
