@@ -79,4 +79,7 @@
     width: 4svh;
     height: 4svh;
   }
+  .big-text {
+    font-size: 8svh;
+  }
 }
