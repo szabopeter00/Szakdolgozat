@@ -51,6 +51,32 @@
   cursor: default;
 }
 
+.scrollup {
+  position: absolute;
+  top: 90%;
+  right: 5%;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+  width: 6svh;
+  height: 6svh;
+
+  -webkit-user-select: none; /* Safari / Chrome */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE / Edge */
+  user-select: none; /* Standard */
+
+  -webkit-user-drag: none;
+
+  -webkit-tap-highlight-color: transparent;
+
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.scrollup:hover {
+  top: 89%;
+}
+
 .buttons {
   display: flex;
   flex-direction: column;
@@ -65,7 +91,12 @@
   height: 4svh;
   border-radius: 50%;
   border: 2px solid #252525;
+  transition: all 0.3s ease;
   cursor: pointer;
+}
+
+.buttons button:hover {
+  transform: scale(1.1);
 }
 
 /* --- RESZPONZÍVITÁS --- */
@@ -78,6 +109,12 @@
     top: 75%;
     width: 4svh;
     height: 4svh;
+  }
+
+  .scrollup {
+    top: 90%;
+    width: 5svh;
+    height: 5svh;
   }
   .big-text {
     font-size: 13vw;

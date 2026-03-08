@@ -59,7 +59,7 @@ export function Model({ onLoaded, ...props }) {
     const handlePointerMove = (e) => {
       if (isDragging.current && useScrollStore.getState().scroll > 0.97) {
         const deltaX = e.clientX - previousX.current;
-        manualRotY.current += deltaX * (isMobile ? 0.03 : 0.01);
+        manualRotY.current += deltaX * (isMobile ? 0.01 : 0.005); // Forgatás érzékenysége
         previousX.current = e.clientX;
       }
     };
@@ -192,7 +192,7 @@ export function Model({ onLoaded, ...props }) {
       // ==========================================
       //           KÉNYELEM SZEKCIÓ
       // ==========================================
-      const rawProgress = MathUtils.clamp((scroll - 0.05) / 0.15, 0, 1);
+      const rawProgress = MathUtils.clamp((scroll - 0.05) / 0.25, 0, 1);
       const progress = 1 - Math.pow(1 - rawProgress, 3);
 
       const finalX = isMobile ? 0.6 : 0.9;
@@ -247,7 +247,7 @@ export function Model({ onLoaded, ...props }) {
       // ==========================================
       //           TARTÓSSÁG SZEKCIÓ
       // ==========================================
-      const rawProgress3 = MathUtils.clamp((scroll - 0.65) / 0.25, 0, 1);
+      const rawProgress3 = MathUtils.clamp((scroll - 0.6) / 0.4, 0, 1);
       const progress3 = 1 - Math.pow(1 - rawProgress3, 3);
 
       if (progress3 > 0) {
