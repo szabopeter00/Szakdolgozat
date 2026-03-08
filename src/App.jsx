@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-
 import Loader from "./components/layout/Loader";
 import Navbar from "./components/layout/Navbar";
 import HeroSection from "./components/sections/HeroSection";
@@ -12,23 +11,6 @@ import AppearanceSection from "./components/sections/AppearanceSection";
 export default function App() {
   const [isReady, setIsReady] = useState(false);
 
-  // Mobilnézet magasságának beállítása
-  useEffect(() => {
-    let lastWidth = window.innerWidth;
-
-    const setHeight = () => {
-      if (window.innerWidth !== lastWidth || !document.documentElement.style.getPropertyValue("--app-height")) {
-        lastWidth = window.innerWidth;
-        document.documentElement.style.setProperty("--app-height", `${window.innerHeight}px`);
-      }
-    };
-
-    setHeight();
-
-    window.addEventListener("resize", setHeight);
-    return () => window.removeEventListener("resize", setHeight);
-  }, []);
-
   // Scroll tiltása amíg tölt
   useEffect(() => {
     if (!isReady) {
@@ -36,8 +18,6 @@ export default function App() {
     } else {
       document.body.style.overflow = "auto";
     }
-
-    // cleanup
     return () => {
       document.body.style.overflow = "auto";
     };

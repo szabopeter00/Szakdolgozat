@@ -1,16 +1,40 @@
-html,
-body {
-  background-color: rgb(255, 231, 196);
-  max-width: 100%;
-  overscroll-behavior: none;
-  margin: 0;
-  padding: 0;
+* {
+  box-sizing: border-box;
 }
 
-.canvas-container {
-  width: 100%;
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background-color: rgb(255, 231, 196);
+  max-width: 100%;
+  overflow-x: hidden;
+  overscroll-behavior: none;
 }
+
 #root {
   max-width: 100%;
   overflow-x: clip;
+}
+
+.app-container {
+  width: 100%;
+  background: rgb(255, 231, 196);
+  position: relative;
+  overflow: hidden;
+}
+
+.scroll-container {
+  position: relative;
+  z-index: 20;
+}
+
+.section {
+  width: 100%;
+  height: 100svh;
+  position: relative;
+}
+
+.canvas-container {
+  pointer-events: none !important;
 }
