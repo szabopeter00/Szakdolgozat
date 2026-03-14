@@ -24,7 +24,7 @@ export default function App() {
   }, [isReady]);
 
   return (
-    <>
+    <main>
       <Loader isReady={isReady} />
 
       <Navbar />
@@ -40,6 +40,6 @@ export default function App() {
       <AppearanceSection />
 
       <CanvasScene onReady={() => setIsReady(true)} />
-    </>
+    </main>
   );
 }
