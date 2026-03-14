@@ -8,22 +8,18 @@ import { useColorStore } from "../../store/useColorStore";
 export function Model({ onLoaded, ...props }) {
   const { nodes, materials } = useGLTF("../models/fejhallgatoo.glb");
   const groupRef = useRef();
-
   // --- robbantott ábrához referenciák ---
   const topRef = useRef();
-
   const hingeLeftRef = useRef();
   const sliderHousingLeftRef = useRef();
   const sliderMetalLeftRef = useRef();
   const sliderTrackLeftRef = useRef();
   const yokeLeftRef = useRef();
-
   const hingeRightRef = useRef();
   const sliderHousingRightRef = useRef();
   const sliderMetalRightRef = useRef();
   const sliderTrackRightRef = useRef();
   const yokeRightRef = useRef();
-
   const outLeftRef = useRef();
   const outRightRef = useRef();
   const padLeftRef = useRef();
@@ -32,11 +28,11 @@ export function Model({ onLoaded, ...props }) {
   const speakerRightRef = useRef();
 
   const [isSpinning, setIsSpinning] = useState(true);
-
-  // Szín lekérése a store-ból
   const currentColor = useColorStore((s) => s.modelColor);
 
+  // Képernyőméretek meghatározása
   const isMobile = window.innerWidth <= 768;
+  const isTablet = window.innerWidth > 768 && window.innerWidth <= 1150;
   const initialCameraZ = isMobile ? 3.5 : 2;
 
   const scroll = useScrollStore((s) => s.scroll);
@@ -59,7 +55,7 @@ export function Model({ onLoaded, ...props }) {
     const handlePointerMove = (e) => {
       if (isDragging.current && useScrollStore.getState().scroll > 0.97) {
         const deltaX = e.clientX - previousX.current;
-        manualRotY.current += deltaX * (isMobile ? 0.03 : 0.005); // Forgatás érzékenysége
+        manualRotY.current += deltaX * (isMobile ? 0.02 : 0.005);
         previousX.current = e.clientX;
       }
     };
@@ -73,7 +69,7 @@ export function Model({ onLoaded, ...props }) {
       window.removeEventListener("pointerup", handlePointerUp);
       window.removeEventListener("pointermove", handlePointerMove);
     };
-  }, []);
+  }, [isMobile]);
 
   useEffect(() => {
     const loadTimer = setTimeout(() => {
@@ -84,27 +80,20 @@ export function Model({ onLoaded, ...props }) {
     return () => clearTimeout(loadTimer);
   }, [onLoaded]);
 
-  // --- ÚJ: FELHÚZVA! Itt hozzuk létre a fülpárna anyagát a színezés ELŐTT ---
   const padMaterial = useMemo(() => {
     return materials.ColorMaterial.clone();
   }, [materials.ColorMaterial]);
 
-  // --- ÚJ: Összevont, letisztított színező useEffect ---
   useEffect(() => {
     Object.values(materials).forEach((material) => {
-      // Eredeti anyagjavításaid
       if (material.roughness < 0.1) material.roughness = 0.15;
       if (material.metalness > 0.9) material.metalness = 0.9;
-
-      // Fő anyag színezése
       if (material.name === "ColorMaterial") {
         material.color.set(currentColor);
       }
-
       material.needsUpdate = true;
     });
 
-    // Fülpárnák klónozott anyagának színezése
     if (padMaterial) {
       padMaterial.color.set(currentColor);
       padMaterial.needsUpdate = true;
@@ -117,7 +106,6 @@ export function Model({ onLoaded, ...props }) {
   useFrame((state, delta) => {
     if (!groupRef.current) return;
 
-    // --- KEZDŐPOZÍCIÓK ---
     if (isFirstFrame.current) {
       state.camera.position.y = 4.5;
       state.camera.position.z = initialCameraZ + 3;
@@ -126,38 +114,27 @@ export function Model({ onLoaded, ...props }) {
     }
 
     const safeDelta = Math.min(delta, 0.1);
-
     let currentCameraTargetZ = initialCameraZ;
     let currentCameraTargetY = 0;
-
     let targetRotY = -8.28;
 
     if (scroll < 0.1) {
       groupRef.current.rotation.y = MathUtils.lerp(groupRef.current.rotation.y, targetRotY, 0.04);
     }
 
-    // --- LEBEGÉS ---
     const baseModelY = -0.15;
     introTime.current += safeDelta;
     const hoverFade = MathUtils.clamp(1 - scroll / 0.1, 0, 1);
     const hoverOffset = Math.sin(introTime.current * 1.2) * 0.018;
-
     let targetModelY = baseModelY + hoverOffset * hoverFade;
-
-    /* =========================
-    SCROLL ANIMÁCIÓ
-    ========================== */
 
     let targetX = 0;
     let modelTargetZ = 0;
-
     let padLeftX = 0,
-      padLeftY = 0;
-    let speakerLeftX = 0,
+      padLeftY = 0,
+      speakerLeftX = 0,
       speakerLeftY = 0;
-
     let expTopY = 0;
-
     let hLX = 0,
       hLY = 0,
       shLX = 0,
@@ -178,14 +155,13 @@ export function Model({ onLoaded, ...props }) {
       stRY = 0,
       yRX = 0,
       yRY = 0;
-
     let expOutLX = 0,
-      expOutLY = 0;
-    let expOutRX = 0,
-      expOutRY = 0;
-    let padRightX = 0,
-      padRightY = 0;
-    let speakerRightX = 0,
+      expOutLY = 0,
+      expOutRX = 0,
+      expOutRY = 0,
+      padRightX = 0,
+      padRightY = 0,
+      speakerRightX = 0,
       speakerRightY = 0;
 
     if (scroll > 0) {
@@ -195,7 +171,7 @@ export function Model({ onLoaded, ...props }) {
       const rawProgress = MathUtils.clamp((scroll - 0.05) / 0.25, 0, 1);
       const progress = 1 - Math.pow(1 - rawProgress, 3);
 
-      const finalX = isMobile ? 0.6 : 0.9;
+      const finalX = isMobile ? 0.6 : isTablet ? 0.5 : 0.9;
       targetX = finalX * progress;
 
       const finalZ = isMobile ? 0.4 : -0.3;
@@ -218,13 +194,13 @@ export function Model({ onLoaded, ...props }) {
       const progress2 = 1 - Math.pow(1 - rawProgress2, 3);
 
       if (progress2 > 0) {
-        const section3X = isMobile ? -0.2 : -0.8;
+        const section3X = isMobile ? -0.2 : isTablet ? -0.5 : -0.8;
         targetX = MathUtils.lerp(targetX, section3X, progress2);
 
-        const section3Z = isMobile ? 0.2 : 0.5;
+        const section3Z = isMobile ? 0.2 : isTablet ? -0.1 : 0.5;
         modelTargetZ = MathUtils.lerp(modelTargetZ, section3Z, progress2);
 
-        const section3Y = isMobile ? -6.5 : -5.7;
+        const section3Y = isMobile ? -6.5 : isTablet ? -6.0 : -5.7;
         targetRotY = MathUtils.lerp(targetRotY, section3Y, progress2);
 
         const section3CamY = isMobile ? 1.3 : 1.3;
@@ -335,7 +311,6 @@ export function Model({ onLoaded, ...props }) {
     // --- ALKATRÉSZEK LERPEZÉSE ---
     const smooth = 0.08;
     if (topRef.current) topRef.current.position.y = MathUtils.lerp(topRef.current.position.y, expTopY, smooth);
-
     if (hingeLeftRef.current) {
       hingeLeftRef.current.position.x = MathUtils.lerp(hingeLeftRef.current.position.x, hLX, smooth);
       hingeLeftRef.current.position.y = MathUtils.lerp(hingeLeftRef.current.position.y, hLY, smooth);
@@ -356,7 +331,6 @@ export function Model({ onLoaded, ...props }) {
       yokeLeftRef.current.position.x = MathUtils.lerp(yokeLeftRef.current.position.x, yLX, smooth);
       yokeLeftRef.current.position.y = MathUtils.lerp(yokeLeftRef.current.position.y, yLY, smooth);
     }
-
     if (hingeRightRef.current) {
       hingeRightRef.current.position.x = MathUtils.lerp(hingeRightRef.current.position.x, hRX, smooth);
       hingeRightRef.current.position.y = MathUtils.lerp(hingeRightRef.current.position.y, hRY, smooth);
@@ -377,14 +351,12 @@ export function Model({ onLoaded, ...props }) {
       yokeRightRef.current.position.x = MathUtils.lerp(yokeRightRef.current.position.x, yRX, smooth);
       yokeRightRef.current.position.y = MathUtils.lerp(yokeRightRef.current.position.y, yRY, smooth);
     }
-
     if (outLeftRef.current) {
       outLeftRef.current.position.x = MathUtils.lerp(outLeftRef.current.position.x, expOutLX, smooth);
     }
     if (outRightRef.current) {
       outRightRef.current.position.x = MathUtils.lerp(outRightRef.current.position.x, expOutRX, smooth);
     }
-
     if (padLeftRef.current) {
       padLeftRef.current.position.x = MathUtils.lerp(padLeftRef.current.position.x, padLeftX, smooth);
       padLeftRef.current.position.y = MathUtils.lerp(padLeftRef.current.position.y, padLeftY, smooth);
@@ -393,7 +365,6 @@ export function Model({ onLoaded, ...props }) {
       speakerLeftRef.current.position.x = MathUtils.lerp(speakerLeftRef.current.position.x, speakerLeftX, smooth);
       speakerLeftRef.current.position.y = MathUtils.lerp(speakerLeftRef.current.position.y, speakerLeftY, smooth);
     }
-
     if (padRightRef.current) {
       padRightRef.current.position.x = MathUtils.lerp(padRightRef.current.position.x, padRightX, smooth);
       padRightRef.current.position.y = MathUtils.lerp(padRightRef.current.position.y, padRightY, smooth);
@@ -476,7 +447,6 @@ export function Model({ onLoaded, ...props }) {
         <mesh geometry={nodes.EarCup_Right.geometry} material={materials.ColorMaterial} />
       </group>
 
-      {/* FIGYELEM: Levettük innen a régi material-color={} propot, hogy a useEffect végezze a dolgát! */}
       <mesh ref={padLeftRef} geometry={nodes.EarPad_Left.geometry} material={padMaterial} />
       <mesh ref={padRightRef} geometry={nodes.EarPad_Right.geometry} material={padMaterial} />
       <mesh ref={speakerLeftRef} geometry={nodes.SpeakerDriver_Left.geometry} material={materials.ColorMaterial} />

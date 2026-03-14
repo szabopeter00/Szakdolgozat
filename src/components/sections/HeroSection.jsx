@@ -1,7 +1,7 @@
 import "../../styles/hero.css";
 import "../../index.css";
 
-export default function HeroSection({ onCanvasReady }) {
+export default function HeroSection({}) {
   return (
     <section className="hero">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 177.48 70.76" alt="Logo" className="logo slide-in-top">
