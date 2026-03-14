@@ -1,49 +1,70 @@
 import "../../styles/appearance.css";
 import "../../index.css";
 import { useColorStore } from "../../store/useColorStore";
+import { useState } from "react";
 
 export default function AppearanceSection({ onCanvasReady }) {
   const { setModelColor } = useColorStore();
+  const [bgState, setBgState] = useState("radial-gradient(circle, rgb(255, 229, 198) 10%, rgb(255, 216, 157) 70%)");
+
+  const handleColorChange = (headphoneColor, backgroundColor) => {
+    setModelColor(headphoneColor);
+    setBgState(backgroundColor);
+  };
+
   return (
-    <section className="appearance">
+    <section
+      className="appearance"
+      style={{
+        background: bgState,
+      }}
+    >
       <div className="big-text">ALAKíTSD</div>
       <div className="buttons">
+        {/* BÉZS FEJHALLGATÓ */}
         <button
           aria-label="Bézs szín kiválasztása"
-          onClick={() => setModelColor("#ffecd6")}
-          style={{
-            backgroundColor: "#ffecd6",
-          }}
+          onClick={() =>
+            handleColorChange("#ffecd6", "radial-gradient(circle, rgb(255, 229, 198) 10%, rgb(255, 216, 157) 70%)")
+          }
+          style={{ backgroundColor: "#ffecd6" }}
         />
+
+        {/* PINK FEJHALLGATÓ */}
         <button
           aria-label="Pink szín kiválasztása"
-          onClick={() => setModelColor("#f9c7fc")}
-          style={{
-            backgroundColor: "#f9c7fc",
-          }}
+          onClick={() =>
+            handleColorChange("#f9c7fc", "radial-gradient(circle, rgb(255, 218, 253) 10%, rgb(231, 169, 233) 70%)")
+          }
+          style={{ backgroundColor: "#f9c7fc" }}
         />
+
+        {/* ARANYBARNA FEJHALLGATÓ */}
         <button
           aria-label="Aranybarna szín kiválasztása"
-          onClick={() => setModelColor("#c9ac6e")}
-          style={{
-            backgroundColor: "#c9ac6e",
-          }}
+          onClick={() =>
+            handleColorChange("#c9ac6e", "radial-gradient(circle, rgb(219, 196, 167) 20%, rgb(216, 170, 100) 70%")
+          }
+          style={{ backgroundColor: "#c9ac6e" }}
         />
+
+        {/* SÖTÉTSZÜRKE FEJHALLGATÓ */}
         <button
           aria-label="Sötétszürke szín kiválasztása"
-          onClick={() => setModelColor("#969696")}
-          style={{
-            backgroundColor: "#969696",
-          }}
+          onClick={() =>
+            handleColorChange("#969696", "radial-gradient(circle, rgb(207, 207, 207) 20%, rgb(146, 146, 146) 80%)")
+          }
+          style={{ backgroundColor: "#969696" }}
         />
       </div>
+
       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="rotate">
         <g id="arrow-rotate-vertical-axis-left-fill">
           <path
             id="Union"
             fill="#8b5f00"
             d="M9 11.2402c-1.13845 0.19 -2.14458 0.4832 -2.95801 0.8448 -0.73796 0.3279 -1.27308 0.6934 -1.61035 1.0478C4.09945 13.482 4 13.7731 4 14s0.09945 0.518 0.43164 0.8672c0.33727 0.3544 0.87239 0.7199 1.61035 1.0478 1.27664 0.5674 3.02807 0.9652 5.02051 1.0616L10.043 15.957c-0.39056 -0.3905 -0.39056 -1.0235 0 -1.414 0.3905 -0.3906 1.0235 -0.3906 1.414 0l2.75 2.75c0.1876 0.1875 0.293 0.4418 0.293 0.707s-0.1054 0.5195 -0.293 0.707l-2.75 2.75c-0.3905 0.3906 -1.0235 0.3906 -1.414 0 -0.39056 -0.3905 -0.39056 -1.0235 0 -1.414l1.0615 -1.0625c-2.24491 -0.094 -4.29851 -0.5376 -5.87501 -1.2383 -0.89057 -0.3959 -1.67356 -0.8935 -2.24707 -1.4961C2.40412 15.6383 2 14.8775 2 14s0.40412 -1.6383 0.98242 -2.2461c0.57351 -0.6026 1.3565 -1.1002 2.24707 -1.4961C6.29709 9.78332 7.58358 9.42703 9 9.2168zm6 -2.0234c1.4164 0.21023 2.7029 0.56652 3.7705 1.041 0.8906 0.3959 1.6736 0.8935 2.2471 1.4961C21.5959 12.3617 22 13.1225 22 14c0 1.6685 -1.4091 2.8759 -2.9727 3.624 -0.4981 0.2384 -1.0956 0.0275 -1.3339 -0.4707 -0.2384 -0.4982 -0.0275 -1.0956 0.4707 -1.334C19.5844 15.1397 20 14.4339 20 14c0 -0.2269 -0.0995 -0.518 -0.4316 -0.8672 -0.3373 -0.3544 -0.8724 -0.7199 -1.6104 -1.0478 -0.8134 -0.3616 -1.8196 -0.6548 -2.958 -0.8448zM12 2c0.5523 0 1 0.44772 1 1v8.0264l-0.002 -0.001c-0.0134 0.5405 -0.4542 0.9746 -0.998 0.9746s-0.9855 -0.4341 -0.999 -0.9746l-0.001 0.001V3c0 -0.55228 0.4477 -1 1 -1"
-            stroke-width="1"
+            strokeWidth="1"
           ></path>
         </g>
       </svg>
@@ -58,10 +79,10 @@ export default function AppearanceSection({ onCanvasReady }) {
         <g id="Free Remix/Interface Essential/line-arrow-up-dashed-square--arrow-keyboard-button-up-square-dashes">
           <path
             fill="#8b5f00"
-            fill-rule="evenodd"
+            fillRule="evenodd"
             d="M1.625 2c0 -0.20711 0.16789 -0.375 0.375 -0.375h0.5c0.34518 0 0.625 -0.27982 0.625 -0.625 0 -0.345178 -0.27982 -0.625 -0.625 -0.625H2C1.10254 0.375 0.375 1.10254 0.375 2v0.5c0 0.34518 0.279822 0.625 0.625 0.625 0.34518 0 0.625 -0.27982 0.625 -0.625V2Zm5.13576 1.42242c-0.07372 0.0305 -0.14278 0.07572 -0.2027 0.13564l-2 2c-0.24408 0.24408 -0.24408 0.6398 0 0.88388 0.24408 0.24408 0.6398 0.24408 0.88388 0l0.93306 -0.93306V10c0 0.3452 0.27982 0.625 0.625 0.625s0.625 -0.2798 0.625 -0.625V5.50888l0.93306 0.93306c0.24408 0.24408 0.6398 0.24408 0.88388 0 0.24408 -0.24408 0.24408 -0.6398 0 -0.88388l-2 -2C7.3199 3.43602 7.15995 3.375 7 3.375c-0.08474 0 -0.16555 0.01687 -0.23924 0.04742ZM1 10.875c0.34518 0 0.625 0.2798 0.625 0.625v0.5c0 0.2071 0.16789 0.375 0.375 0.375h0.5c0.34518 0 0.625 0.2798 0.625 0.625s-0.27982 0.625 -0.625 0.625H2c-0.89746 0 -1.625 -0.7275 -1.625 -1.625v-0.5c0 -0.3452 0.279822 -0.625 0.625 -0.625Zm5 1.5c-0.34518 0 -0.625 0.2798 -0.625 0.625s0.27982 0.625 0.625 0.625h2c0.34518 0 0.625 -0.2798 0.625 -0.625s-0.27982 -0.625 -0.625 -0.625H6Zm7 -1.5c0.3452 0 0.625 0.2798 0.625 0.625v0.5c0 0.8975 -0.7275 1.625 -1.625 1.625h-0.5c-0.3452 0 -0.625 -0.2798 -0.625 -0.625s0.2798 -0.625 0.625 -0.625h0.5c0.2071 0 0.375 -0.1679 0.375 -0.375v-0.5c0 -0.3452 0.2798 -0.625 0.625 -0.625ZM13.625 6c0 -0.34518 -0.2798 -0.625 -0.625 -0.625s-0.625 0.27982 -0.625 0.625v2c0 0.34518 0.2798 0.625 0.625 0.625s0.625 -0.27982 0.625 -0.625V6ZM1 5.375c0.34518 0 0.625 0.27982 0.625 0.625v2c0 0.34518 -0.27982 0.625 -0.625 0.625 -0.345178 0 -0.625 -0.27982 -0.625 -0.625V6c0 -0.34518 0.279822 -0.625 0.625 -0.625ZM5.375 1c0 -0.345178 0.27982 -0.625 0.625 -0.625h2c0.34518 0 0.625 0.279822 0.625 0.625 0 0.34518 -0.27982 0.625 -0.625 0.625H6c-0.34518 0 -0.625 -0.27982 -0.625 -0.625ZM11.5 0.375c-0.3452 0 -0.625 0.279822 -0.625 0.625 0 0.34518 0.2798 0.625 0.625 0.625h0.5c0.2071 0 0.375 0.16789 0.375 0.375v0.5c0 0.34518 0.2798 0.625 0.625 0.625s0.625 -0.27982 0.625 -0.625V2c0 -0.89746 -0.7275 -1.625 -1.625 -1.625h-0.5Z"
-            clip-rule="evenodd"
-            stroke-width="1"
+            clipRule="evenodd"
+            strokeWidth="1"
           ></path>
         </g>
       </svg>
