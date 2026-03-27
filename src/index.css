@@ -52,7 +52,9 @@ body {
 }
 
 .canvas-container {
-  width: 100%;
   pointer-events: none !important;
   touch-action: none !important;
+
+  width: 100vw !important;
+  height: 100vh !important;
 }
