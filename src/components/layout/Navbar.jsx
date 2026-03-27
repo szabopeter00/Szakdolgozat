@@ -28,7 +28,7 @@ export default function Navbar() {
       0, // 0: Kezdőlap
       170, // 1: Kényelem
       410, // 2: Hangzás
-      680, // 3: Tartósság
+      660, // 3: Tartósság
       880, // 4: Kinézet
     ];
 
