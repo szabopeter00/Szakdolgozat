@@ -55,7 +55,10 @@ export function Model({ onLoaded, ...props }) {
     const handlePointerMove = (e) => {
       if (isDragging.current && useScrollStore.getState().scroll > 0.97) {
         const deltaX = e.clientX - previousX.current;
-        manualRotY.current += deltaX * (isMobile ? 0.02 : 0.005);
+
+        const sensitivity = e.pointerType === "touch" || e.pointerType === "pen" ? 0.015 : 0.005;
+
+        manualRotY.current += deltaX * sensitivity;
         previousX.current = e.clientX;
       }
     };
