@@ -54,4 +54,6 @@ body {
 .canvas-container {
   pointer-events: none !important;
   touch-action: none !important;
+
+  height: 100vh !important;
 }

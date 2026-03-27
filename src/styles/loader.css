@@ -2,7 +2,8 @@
   position: fixed;
   top: 0;
   left: 0;
-  inset: 0;
+  right: 0;
+  height: 100vh;
   background: #faead8;
   display: flex;
   align-items: center;
