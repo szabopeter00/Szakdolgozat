@@ -55,8 +55,7 @@ export function Model({ onLoaded, ...props }) {
     const handlePointerMove = (e) => {
       if (isDragging.current && useScrollStore.getState().scroll > 0.97) {
         const deltaX = e.clientX - previousX.current;
-
-        const sensitivity = e.pointerType === "touch" || e.pointerType === "pen" ? 0.015 : 0.005;
+        const sensitivity = 10 / window.innerWidth;
 
         manualRotY.current += deltaX * sensitivity;
         previousX.current = e.clientX;
@@ -72,7 +71,7 @@ export function Model({ onLoaded, ...props }) {
       window.removeEventListener("pointerup", handlePointerUp);
       window.removeEventListener("pointermove", handlePointerMove);
     };
-  }, [isMobile]);
+  }, []); // <-- Fontos: Üres függőségi tömb, hogy csak egyszer fusson le!
 
   useEffect(() => {
     const loadTimer = setTimeout(() => {
