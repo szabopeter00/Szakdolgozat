@@ -42,36 +42,98 @@ export function Model({ onLoaded, ...props }) {
   const isDragging = useRef(false);
   const previousX = useRef(0);
 
+  // Új változók a húzás irányának eldöntéséhez
+  const startX = useRef(0);
+  const startY = useRef(0);
+  const isHorizontalDrag = useRef(null);
+
   useEffect(() => {
-    const handlePointerDown = (e) => {
+    // ==========================================
+    // 1. MOBIL (ÉRINTÉS) ESEMÉNYEK KEZELÉSE
+    // ==========================================
+    const handleTouchStart = (e) => {
+      if (useScrollStore.getState().scroll > 0.97) {
+        isDragging.current = true;
+        startX.current = e.touches[0].clientX;
+        startY.current = e.touches[0].clientY;
+        previousX.current = e.touches[0].clientX;
+        isHorizontalDrag.current = null; // Alaphelyzetbe állítás
+      }
+    };
+
+    const handleTouchMove = (e) => {
+      if (isDragging.current && useScrollStore.getState().scroll > 0.97) {
+        const currentX = e.touches[0].clientX;
+        const currentY = e.touches[0].clientY;
+
+        // Eldöntjük a húzás első pár pixeléből, hogy ez vízszintes forgatás-e, vagy függőleges görgetés
+        if (isHorizontalDrag.current === null) {
+          const diffX = Math.abs(currentX - startX.current);
+          const diffY = Math.abs(currentY - startY.current);
+          if (diffX > 5 || diffY > 5) {
+            isHorizontalDrag.current = diffX > diffY;
+          }
+        }
+
+        // HA VÍZSZINTES HÚZÁS TÖRTÉNIK:
+        if (isHorizontalDrag.current === true) {
+          // EZ BLOKKOLJA AZ ANDROIDOT! Nem engedi megszakítani az eseményt!
+          if (e.cancelable) e.preventDefault();
+
+          const deltaX = currentX - previousX.current;
+          const sensitivity = 10 / window.innerWidth;
+          manualRotY.current += deltaX * sensitivity;
+        }
+
+        previousX.current = currentX;
+      }
+    };
+
+    const handleTouchEnd = () => {
+      isDragging.current = false;
+    };
+
+    // ==========================================
+    // 2. ASZTALI GÉP (EGÉR) ESEMÉNYEK KEZELÉSE
+    // ==========================================
+    const handleMouseDown = (e) => {
       if (useScrollStore.getState().scroll > 0.97) {
         isDragging.current = true;
         previousX.current = e.clientX;
       }
     };
-    const handlePointerUp = () => {
-      isDragging.current = false;
-    };
-    const handlePointerMove = (e) => {
+
+    const handleMouseMove = (e) => {
       if (isDragging.current && useScrollStore.getState().scroll > 0.97) {
         const deltaX = e.clientX - previousX.current;
         const sensitivity = 10 / window.innerWidth;
-
         manualRotY.current += deltaX * sensitivity;
         previousX.current = e.clientX;
       }
     };
 
-    window.addEventListener("pointerdown", handlePointerDown);
-    window.addEventListener("pointerup", handlePointerUp);
-    window.addEventListener("pointermove", handlePointerMove);
+    const handleMouseUp = () => {
+      isDragging.current = false;
+    };
+
+    window.addEventListener("touchstart", handleTouchStart, { passive: false });
+    window.addEventListener("touchmove", handleTouchMove, { passive: false });
+    window.addEventListener("touchend", handleTouchEnd);
+
+    window.addEventListener("mousedown", handleMouseDown);
+    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mouseup", handleMouseUp);
 
     return () => {
-      window.removeEventListener("pointerdown", handlePointerDown);
-      window.removeEventListener("pointerup", handlePointerUp);
-      window.removeEventListener("pointermove", handlePointerMove);
+      window.removeEventListener("touchstart", handleTouchStart);
+      window.removeEventListener("touchmove", handleTouchMove);
+      window.removeEventListener("touchend", handleTouchEnd);
+
+      window.removeEventListener("mousedown", handleMouseDown);
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseup", handleMouseUp);
     };
-  }, []); // <-- Fontos: Üres függőségi tömb, hogy csak egyszer fusson le!
+  }, []);
 
   useEffect(() => {
     const loadTimer = setTimeout(() => {
