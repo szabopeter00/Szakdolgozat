@@ -57,7 +57,7 @@ export function Model({ onLoaded, ...props }) {
         startX.current = e.touches[0].clientX;
         startY.current = e.touches[0].clientY;
         previousX.current = e.touches[0].clientX;
-        isHorizontalDrag.current = null; // Alaphelyzetbe állítás
+        isHorizontalDrag.current = null;
       }
     };
 
@@ -66,7 +66,6 @@ export function Model({ onLoaded, ...props }) {
         const currentX = e.touches[0].clientX;
         const currentY = e.touches[0].clientY;
 
-        // Eldöntjük a húzás első pár pixeléből, hogy ez vízszintes forgatás-e, vagy függőleges görgetés
         if (isHorizontalDrag.current === null) {
           const diffX = Math.abs(currentX - startX.current);
           const diffY = Math.abs(currentY - startY.current);
@@ -77,11 +76,10 @@ export function Model({ onLoaded, ...props }) {
 
         // HA VÍZSZINTES HÚZÁS TÖRTÉNIK:
         if (isHorizontalDrag.current === true) {
-          // EZ BLOKKOLJA AZ ANDROIDOT! Nem engedi megszakítani az eseményt!
           if (e.cancelable) e.preventDefault();
 
           const deltaX = currentX - previousX.current;
-          const sensitivity = 10 / window.innerWidth;
+          const sensitivity = 8 / window.innerWidth;
           manualRotY.current += deltaX * sensitivity;
         }
 
