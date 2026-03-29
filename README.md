@@ -5,7 +5,7 @@
 > Egyetem, egyetemi kar, szak: Szegedi Tudományegyetem, Természettudományi És Informatikai Kar – Programtervező informatikus BSc  
 > Témavezető: Kicsi András Dr.  
 > Év: 2026  
-> Megtekintés: https://szakdolgozat-rho.vercel.app/
+> Megtekintés: https://szakdolgozat-rho.vercel.app/  
 > Statikus verzió megtekintése: LINK
 
 ## A projektről
