@@ -1,14 +1,19 @@
-import React, { useState, useMemo, useEffect, useRef } from "react";
-import { useGLTF, ContactShadows } from "@react-three/drei";
+import { useState, useEffect, useRef } from "react";
+import { useGLTF } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import { MathUtils } from "three";
 import { useScrollStore } from "../../store/useScrollStore";
-import { useColorStore } from "../../store/useColorStore";
+
+// --- CUSTOM HOOKS ---
+import { useInteractiveRotation } from "../../hooks/useInteractiveRotation";
+import { useModelMaterials } from "../../hooks/useModelMaterials";
 
 export function Model({ onLoaded, ...props }) {
+  // --- Erőforrások ---
   const { nodes, materials } = useGLTF("../models/fejhallgatoo.glb");
   const groupRef = useRef();
-  // --- robbantott ábrához referenciák ---
+
+  // --- Robbantott ábrához referenciák ---
   const topRef = useRef();
   const hingeLeftRef = useRef();
   const sliderHousingLeftRef = useRef();
@@ -27,112 +32,21 @@ export function Model({ onLoaded, ...props }) {
   const padRightRef = useRef();
   const speakerRightRef = useRef();
 
+  // --- Állapotok és Képernyőméretek ---
   const [isSpinning, setIsSpinning] = useState(true);
-  const currentColor = useColorStore((s) => s.modelColor);
+  const scroll = useScrollStore((s) => s.scroll);
 
-  // Képernyőméretek meghatározása
+  /// --- Reszponzív méretek ---
   const isMobile = window.innerWidth <= 768;
   const isTablet = window.innerWidth > 768 && window.innerWidth <= 1150;
   const initialCameraZ = isMobile ? 3.5 : 2;
 
-  const scroll = useScrollStore((s) => s.scroll);
+  // --- Anyagok és színek dinamikus kezelése ---
+  const padMaterial = useModelMaterials(materials);
+  // --- Interaktív forgatás kezelése ---
+  const manualRotY = useInteractiveRotation(-8.28);
 
-  // --- interaktív forgatás (a végén) ---
-  const manualRotY = useRef(-8.28);
-  const isDragging = useRef(false);
-  const previousX = useRef(0);
-
-  // Új változók a húzás irányának eldöntéséhez
-  const startX = useRef(0);
-  const startY = useRef(0);
-  const isHorizontalDrag = useRef(null);
-
-  useEffect(() => {
-    // ==========================================
-    // 1. MOBIL (ÉRINTÉS) ESEMÉNYEK KEZELÉSE
-    // ==========================================
-    const handleTouchStart = (e) => {
-      if (useScrollStore.getState().scroll > 0.97) {
-        isDragging.current = true;
-        startX.current = e.touches[0].clientX;
-        startY.current = e.touches[0].clientY;
-        previousX.current = e.touches[0].clientX;
-        isHorizontalDrag.current = null;
-      }
-    };
-
-    const handleTouchMove = (e) => {
-      if (isDragging.current && useScrollStore.getState().scroll > 0.97) {
-        const currentX = e.touches[0].clientX;
-        const currentY = e.touches[0].clientY;
-
-        if (isHorizontalDrag.current === null) {
-          const diffX = Math.abs(currentX - startX.current);
-          const diffY = Math.abs(currentY - startY.current);
-          if (diffX > 5 || diffY > 5) {
-            isHorizontalDrag.current = diffX > diffY;
-          }
-        }
-
-        // HA VÍZSZINTES HÚZÁS TÖRTÉNIK:
-        if (isHorizontalDrag.current === true) {
-          if (e.cancelable) e.preventDefault();
-
-          const deltaX = currentX - previousX.current;
-          const sensitivity = 8 / window.innerWidth;
-          manualRotY.current += deltaX * sensitivity;
-        }
-
-        previousX.current = currentX;
-      }
-    };
-
-    const handleTouchEnd = () => {
-      isDragging.current = false;
-    };
-
-    // ==========================================
-    // 2. ASZTALI GÉP (EGÉR) ESEMÉNYEK KEZELÉSE
-    // ==========================================
-    const handleMouseDown = (e) => {
-      if (useScrollStore.getState().scroll > 0.97) {
-        isDragging.current = true;
-        previousX.current = e.clientX;
-      }
-    };
-
-    const handleMouseMove = (e) => {
-      if (isDragging.current && useScrollStore.getState().scroll > 0.97) {
-        const deltaX = e.clientX - previousX.current;
-        const sensitivity = 10 / window.innerWidth;
-        manualRotY.current += deltaX * sensitivity;
-        previousX.current = e.clientX;
-      }
-    };
-
-    const handleMouseUp = () => {
-      isDragging.current = false;
-    };
-
-    window.addEventListener("touchstart", handleTouchStart, { passive: false });
-    window.addEventListener("touchmove", handleTouchMove, { passive: false });
-    window.addEventListener("touchend", handleTouchEnd);
-
-    window.addEventListener("mousedown", handleMouseDown);
-    window.addEventListener("mousemove", handleMouseMove);
-    window.addEventListener("mouseup", handleMouseUp);
-
-    return () => {
-      window.removeEventListener("touchstart", handleTouchStart);
-      window.removeEventListener("touchmove", handleTouchMove);
-      window.removeEventListener("touchend", handleTouchEnd);
-
-      window.removeEventListener("mousedown", handleMouseDown);
-      window.removeEventListener("mousemove", handleMouseMove);
-      window.removeEventListener("mouseup", handleMouseUp);
-    };
-  }, []);
-
+  // --- Betöltés utáni időzítés ---
   useEffect(() => {
     const loadTimer = setTimeout(() => {
       onLoaded?.();
@@ -142,32 +56,15 @@ export function Model({ onLoaded, ...props }) {
     return () => clearTimeout(loadTimer);
   }, [onLoaded]);
 
-  const padMaterial = useMemo(() => {
-    return materials.ColorMaterial.clone();
-  }, [materials.ColorMaterial]);
-
-  useEffect(() => {
-    Object.values(materials).forEach((material) => {
-      if (material.roughness < 0.1) material.roughness = 0.15;
-      if (material.metalness > 0.9) material.metalness = 0.9;
-      if (material.name === "ColorMaterial") {
-        material.color.set(currentColor);
-      }
-      material.needsUpdate = true;
-    });
-
-    if (padMaterial) {
-      padMaterial.color.set(currentColor);
-      padMaterial.needsUpdate = true;
-    }
-  }, [materials, currentColor, padMaterial]);
-
+  // --- Animációs változók ---
   const introTime = useRef(0);
   const isFirstFrame = useRef(true);
 
+  // --- ANIMÁCIÓS CIKLUS ---
   useFrame((state, delta) => {
     if (!groupRef.current) return;
 
+    // --- Kezdeti beállítás ---
     if (isFirstFrame.current) {
       state.camera.position.y = 4.5;
       state.camera.position.z = initialCameraZ + 3;
@@ -218,9 +115,7 @@ export function Model({ onLoaded, ...props }) {
       yRX = 0,
       yRY = 0;
     let expOutLX = 0,
-      expOutLY = 0,
       expOutRX = 0,
-      expOutRY = 0,
       padRightX = 0,
       padRightY = 0,
       speakerRightX = 0,
@@ -302,7 +197,6 @@ export function Model({ onLoaded, ...props }) {
         targetRotY = MathUtils.lerp(targetRotY, MathUtils.lerp(targetSpinY, explodeRotY, spinProgress), progress3);
 
         const explodeProgress = MathUtils.clamp((scroll - 0.75) / 0.1, 0, 1);
-
         const resetProgress = MathUtils.clamp((scroll - 0.9) / 0.1, 0, 1);
         const resetEase = 1 - Math.pow(1 - resetProgress, 3);
 
@@ -342,7 +236,9 @@ export function Model({ onLoaded, ...props }) {
           speakerRightX = (isMobile ? 0.45 : 0.85) * easeExp;
         }
 
-        // --- KINÉZET SZEKCIÓ ---
+        // ==========================================
+        //           KINÉZET SZEKCIÓ
+        // ==========================================
         if (resetProgress > 0) {
           targetRotY = MathUtils.lerp(targetRotY, -8.28, resetEase);
           currentCameraTargetY = MathUtils.lerp(currentCameraTargetY, 0, resetEase);
@@ -350,7 +246,7 @@ export function Model({ onLoaded, ...props }) {
           state.scene.environmentRotation.y = MathUtils.lerp(state.scene.environmentRotation.y, 0, resetEase);
         }
 
-        // --- INTERAKTÍV FORGATÁS ---
+        // --- Interaktív forgatás véglegesítése ---
         if (scroll > 0.97) {
           targetRotY = manualRotY.current;
         } else {
@@ -359,9 +255,7 @@ export function Model({ onLoaded, ...props }) {
       }
     }
 
-    /* =========================
-    ALKALMAZÁS A MODELLRE
-    ========================== */
+    // --- Lerpezett értékek alkalmazása ---
     groupRef.current.position.x = MathUtils.lerp(groupRef.current.position.x, targetX, 0.08);
     groupRef.current.position.z = MathUtils.lerp(groupRef.current.position.z, modelTargetZ, 0.08);
     groupRef.current.position.y = targetModelY;
@@ -370,7 +264,6 @@ export function Model({ onLoaded, ...props }) {
       groupRef.current.rotation.y = MathUtils.lerp(groupRef.current.rotation.y, targetRotY, 0.08);
     }
 
-    // --- ALKATRÉSZEK LERPEZÉSE ---
     const smooth = 0.08;
     if (topRef.current) topRef.current.position.y = MathUtils.lerp(topRef.current.position.y, expTopY, smooth);
     if (hingeLeftRef.current) {
@@ -413,12 +306,10 @@ export function Model({ onLoaded, ...props }) {
       yokeRightRef.current.position.x = MathUtils.lerp(yokeRightRef.current.position.x, yRX, smooth);
       yokeRightRef.current.position.y = MathUtils.lerp(yokeRightRef.current.position.y, yRY, smooth);
     }
-    if (outLeftRef.current) {
+    if (outLeftRef.current)
       outLeftRef.current.position.x = MathUtils.lerp(outLeftRef.current.position.x, expOutLX, smooth);
-    }
-    if (outRightRef.current) {
+    if (outRightRef.current)
       outRightRef.current.position.x = MathUtils.lerp(outRightRef.current.position.x, expOutRX, smooth);
-    }
     if (padLeftRef.current) {
       padLeftRef.current.position.x = MathUtils.lerp(padLeftRef.current.position.x, padLeftX, smooth);
       padLeftRef.current.position.y = MathUtils.lerp(padLeftRef.current.position.y, padLeftY, smooth);
@@ -436,9 +327,7 @@ export function Model({ onLoaded, ...props }) {
       speakerRightRef.current.position.y = MathUtils.lerp(speakerRightRef.current.position.y, speakerRightY, smooth);
     }
 
-    /* =========================
-    KAMERA VÉGLEGESÍTÉSE
-    ========================== */
+    // --- Kamera véglegesítése ---
     state.camera.position.z = MathUtils.lerp(state.camera.position.z, currentCameraTargetZ, 0.03);
 
     const introFallSpeed = 0.035;
@@ -453,7 +342,7 @@ export function Model({ onLoaded, ...props }) {
     state.camera.lookAt(0, 0, 0);
   });
 
-  // --- Fejhallgato modell ---
+  // --- A Modell felépítése ---
   return (
     <group ref={groupRef} position={[0, -0.15, 0]} {...props} dispose={null}>
       <group ref={topRef}>
