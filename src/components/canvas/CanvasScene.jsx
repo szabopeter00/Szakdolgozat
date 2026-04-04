@@ -24,7 +24,7 @@ export default function CanvasScene({ onReady }) {
     >
       <ScrollManager />
       <Suspense fallback={null}>
-        <Environment preset="city" environmentIntensity={0.7} adjustCamera={false} />
+        <Environment files="/env/city.hdr" environmentIntensity={0.6} adjustCamera={false} />
         <Model onLoaded={onReady} />
         <ContactShadows position={[0, -0.4, 0]} opacity={1} scale={10} blur={1} far={4} color="#000000" />
       </Suspense>
