@@ -51,7 +51,7 @@ export function Model({ onLoaded, ...props }) {
     const loadTimer = setTimeout(() => {
       onLoaded?.();
       setTimeout(() => setIsSpinning(false), 1700);
-    }, 500);
+    }, 10);
 
     return () => clearTimeout(loadTimer);
   }, [onLoaded]);

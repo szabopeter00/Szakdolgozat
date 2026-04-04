@@ -1,6 +1,6 @@
 import { Canvas } from "@react-three/fiber";
 import { Suspense } from "react";
-import { Model } from "./Fejhallgatoo";
+import { Model } from "./Modell";
 import ScrollManager from "./ScrollManager";
 import { Environment, ContactShadows } from "@react-three/drei";
 
