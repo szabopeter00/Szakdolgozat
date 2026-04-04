@@ -1,23 +1,47 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="hu">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/logo/Logo2.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#FFE7C4" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta
-      name="description"
-      content="Fedezd fel a prémium fejhallgatók új generációját egy interaktív, 3D scrollytelling élményen keresztül."
-    />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <title>Fejhallgató 3D</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;800&display=swap" rel="stylesheet">
+
     <link rel="preload" href="/models/fejhallgatoo.glb" as="fetch" crossorigin="anonymous">
-    <title>Szakdolgozat</title>
+
+    <style>
+      body { margin: 0; background-color: rgb(255, 231, 196); }
+      .static-loader {
+        position: fixed;
+        top: 0; left: 0; width: 100vw; height: 100vh;
+        background: rgb(255, 231, 196);
+        display: flex; flex-direction: column;
+        justify-content: center; align-items: center;
+        font-family: sans-serif; z-index: 99999;
+      }
+      .spinner {
+        width: 40px; height: 40px;
+        border: 4px solid rgba(139, 95, 0, 0.3);
+        border-top-color: #8b5f00;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin-bottom: 20px;
+      }
+      @keyframes spin { 100% { transform: rotate(360deg); } }
+    </style>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      
+      <div class="static-loader">
+        <div class="spinner"></div>
+        <div style="color: #8b5f00; font-weight: bold;">Rendszer indítása...</div>
+      </div>
+
+    </div>
+    
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
