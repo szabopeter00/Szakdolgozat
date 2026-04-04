@@ -4,12 +4,12 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Fejhallgató 3D</title>
-
+    <meta name="description" content="Interaktív, narratív vezérlésű 3D fejhallgató vizualizáció és konfigurátor webes környezetben.">
+    <link rel="preload" href="/models/fejhallgatoo.glb" as="fetch" crossorigin="anonymous">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;800&display=swap" rel="stylesheet">
-
-    <link rel="preload" href="/models/fejhallgatoo.glb" as="fetch" crossorigin="anonymous">
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;800&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;800&display=swap"></noscript>
 
     <style>
       body { margin: 0; background-color: rgb(255, 231, 196); }
@@ -27,7 +27,6 @@
         border-top-color: #8b5f00;
         border-radius: 50%;
         animation: spin 1s linear infinite;
-        margin-bottom: 20px;
       }
       @keyframes spin { 100% { transform: rotate(360deg); } }
     </style>
@@ -37,6 +36,7 @@
       
       <div class="static-loader">
         <div class="spinner"></div>
+        <h1 style="color: #8b5f00; font-size: 8vw; margin-top: 20px; text-align: center;">Fejhallgató 3D</h1>
         <div style="color: #8b5f00; font-weight: bold;">Rendszer indítása...</div>
       </div>
 
