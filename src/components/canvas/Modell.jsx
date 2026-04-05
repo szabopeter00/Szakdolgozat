@@ -81,11 +81,11 @@ export function Model({ onLoaded, ...props }) {
       groupRef.current.rotation.y = MathUtils.lerp(groupRef.current.rotation.y, targetRotY, 0.04);
     }
 
-    const baseModelY = -0.15;
+    let baseModelTargetY = -0.15;
+
     introTime.current += safeDelta;
     const hoverFade = MathUtils.clamp(1 - scroll / 0.1, 0, 1);
     const hoverOffset = Math.sin(introTime.current * 1.2) * 0.018;
-    let targetModelY = baseModelY + hoverOffset * hoverFade;
 
     let targetX = 0;
     let modelTargetZ = 0;
@@ -154,13 +154,16 @@ export function Model({ onLoaded, ...props }) {
         const section3X = isMobile ? -0.2 : isTablet ? -0.5 : -0.8;
         targetX = MathUtils.lerp(targetX, section3X, progress2);
 
+        const section3ModelY = isMobile ? 1.0 : -0.15; 
+        baseModelTargetY = MathUtils.lerp(baseModelTargetY, section3ModelY, progress2);
+
         const section3Z = isMobile ? 0.2 : isTablet ? -0.1 : 0.5;
         modelTargetZ = MathUtils.lerp(modelTargetZ, section3Z, progress2);
 
         const section3Y = isMobile ? -6.5 : isTablet ? -6.0 : -5.7;
         targetRotY = MathUtils.lerp(targetRotY, section3Y, progress2);
 
-        const section3CamY = isMobile ? 0.8 : 1.3;
+        const section3CamY = isMobile ? 1.3 : 1.3;
         currentCameraTargetY = MathUtils.lerp(currentCameraTargetY, section3CamY, progress2);
 
         const section3ZoomAmount = 0.8;
@@ -186,6 +189,7 @@ export function Model({ onLoaded, ...props }) {
       if (progress3 > 0) {
         targetX = MathUtils.lerp(targetX, 0, progress3);
         modelTargetZ = MathUtils.lerp(modelTargetZ, 0, progress3);
+        baseModelTargetY = MathUtils.lerp(baseModelTargetY, -0.15, progress3);
         currentCameraTargetY = MathUtils.lerp(currentCameraTargetY, 0.4, progress3);
 
         currentCameraTargetZ = MathUtils.lerp(currentCameraTargetZ, initialCameraZ + 0.3, progress3);
@@ -256,9 +260,11 @@ export function Model({ onLoaded, ...props }) {
     }
 
     // --- Lerpezett értékek alkalmazása ---
+    let finalTargetModelY = baseModelTargetY + (hoverOffset * hoverFade);
+
     groupRef.current.position.x = MathUtils.lerp(groupRef.current.position.x, targetX, 0.08);
     groupRef.current.position.z = MathUtils.lerp(groupRef.current.position.z, modelTargetZ, 0.08);
-    groupRef.current.position.y = targetModelY;
+    groupRef.current.position.y = MathUtils.lerp(groupRef.current.position.y, finalTargetModelY, 0.08);
 
     if (scroll > 0) {
       groupRef.current.rotation.y = MathUtils.lerp(groupRef.current.rotation.y, targetRotY, 0.08);
