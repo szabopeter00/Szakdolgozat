@@ -160,7 +160,7 @@ export function Model({ onLoaded, ...props }) {
         const section3Y = isMobile ? -6.5 : isTablet ? -6.0 : -5.7;
         targetRotY = MathUtils.lerp(targetRotY, section3Y, progress2);
 
-        const section3CamY = isMobile ? 1.3 : 1.3;
+        const section3CamY = isMobile ? 0.8 : 1.3;
         currentCameraTargetY = MathUtils.lerp(currentCameraTargetY, section3CamY, progress2);
 
         const section3ZoomAmount = 0.8;
