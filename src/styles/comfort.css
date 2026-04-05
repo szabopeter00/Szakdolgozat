@@ -11,7 +11,7 @@ h2 {
   color: #353d46;
   font-family: "Poppins", sans-serif;
   font-weight: 800;
-  font-size: 11vw;
+  font-size: 12vw;
 }
 
 @media (max-width: 768px) {
@@ -20,7 +20,7 @@ h2 {
     height: 230svh;
   }
   h2 {
-    font-size: 8svh;
+    font-size: 7svh;
     font-weight: 900;
 
     max-width: 100%;
