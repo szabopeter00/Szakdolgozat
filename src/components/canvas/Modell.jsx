@@ -154,7 +154,7 @@ export function Model({ onLoaded, ...props }) {
         const section3X = isMobile ? -0.2 : isTablet ? -0.5 : -0.8;
         targetX = MathUtils.lerp(targetX, section3X, progress2);
 
-        const section3ModelY = isMobile ? 1.0 : -0.15; 
+        const section3ModelY = isMobile ? 0.2 : -0.15; 
         baseModelTargetY = MathUtils.lerp(baseModelTargetY, section3ModelY, progress2);
 
         const section3Z = isMobile ? 0.2 : isTablet ? -0.1 : 0.5;
