@@ -128,7 +128,7 @@ export function Model({ onLoaded, ...props }) {
       const rawProgress = MathUtils.clamp((scroll - 0.05) / 0.25, 0, 1);
       const progress = 1 - Math.pow(1 - rawProgress, 3);
 
-      const finalX = isMobile ? 0.6 : isTablet ? 0.5 : 0.9;
+      const finalX = isMobile ? 0.4 : isTablet ? 0.5 : 0.9;
       targetX = finalX * progress;
 
       const finalZ = isMobile ? 0.4 : -0.3;
@@ -151,7 +151,7 @@ export function Model({ onLoaded, ...props }) {
       const progress2 = 1 - Math.pow(1 - rawProgress2, 3);
 
       if (progress2 > 0) {
-        const section3X = isMobile ? -0.2 : isTablet ? -0.5 : -0.8;
+        const section3X = isMobile ? 0.1 : isTablet ? -0.3 : -0.8;
         targetX = MathUtils.lerp(targetX, section3X, progress2);
 
         const section3ModelY = isMobile ? 0.2 : -0.15; 
@@ -217,7 +217,7 @@ export function Model({ onLoaded, ...props }) {
           smLY = 0.4 * easeExp;
           stLX = (isMobile ? -0.1 : -0.4) * easeExp;
           stLY = 0.2 * easeExp;
-          yLX = (isMobile ? -0.4 : -0.8) * easeExp;
+          yLX = (isMobile ? -0.2 : -0.8) * easeExp;
           yLY = 0.3 * easeExp;
 
           hRX = (isMobile ? 0.2 : 0.5) * easeExp;
@@ -228,16 +228,16 @@ export function Model({ onLoaded, ...props }) {
           smRY = 0.4 * easeExp;
           stRX = (isMobile ? 0.1 : 0.4) * easeExp;
           stRY = 0.2 * easeExp;
-          yRX = (isMobile ? 0.4 : 0.8) * easeExp;
+          yRX = (isMobile ? 0.2 : 0.8) * easeExp;
           yRY = 0.3 * easeExp;
 
-          expOutLX = (isMobile ? -0.45 : -1) * easeExp;
-          expOutRX = (isMobile ? 0.55 : 1) * easeExp;
+          expOutLX = (isMobile ? -0.35 : -1) * easeExp;
+          expOutRX = (isMobile ? 0.45 : 1) * easeExp;
 
-          padLeftX = (isMobile ? -0.3 : -0.7) * easeExp;
-          padRightX = (isMobile ? 0.3 : 0.7) * easeExp;
-          speakerLeftX = (isMobile ? -0.4 : -0.85) * easeExp;
-          speakerRightX = (isMobile ? 0.45 : 0.85) * easeExp;
+          padLeftX = (isMobile ? -0.2 : -0.7) * easeExp;
+          padRightX = (isMobile ? 0.2 : 0.7) * easeExp;
+          speakerLeftX = (isMobile ? -0.3 : -0.85) * easeExp;
+          speakerRightX = (isMobile ? 0.35 : 0.85) * easeExp;
         }
 
         // ==========================================
