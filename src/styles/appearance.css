@@ -106,7 +106,7 @@
     background: radial-gradient(circle, rgb(255, 229, 198) 25%, rgb(255, 216, 157) 90%);
   }
   .rotate {
-    top: 75%;
+    bottom: 150px;
     width: 4svh;
     height: 4svh;
   }
