@@ -106,13 +106,13 @@
     background: radial-gradient(circle, rgb(255, 229, 198) 25%, rgb(255, 216, 157) 90%);
   }
   .rotate {
-    bottom: 150px;
+    bottom: 10%;
     width: 4svh;
     height: 4svh;
   }
 
   .scrollup {
-    top: 90%;
+    bottom: 10%;
     width: 5svh;
     height: 5svh;
   }
