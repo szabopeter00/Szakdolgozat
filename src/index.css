@@ -14,7 +14,9 @@ body {
 /* --- ALAPOK --- */
 .logo,
 .big-text,
-.little-text {
+.little-text,
+.progress-number,
+.progress-processing {
   -webkit-user-select: none; /* Safari / Chrome */
   -moz-user-select: none; /* Firefox */
   -ms-user-select: none; /* IE / Edge */
